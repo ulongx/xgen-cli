@@ -42,13 +42,21 @@ $ make
 ```
 
 ### xgen g
+
+server端单个类代码
 ```bash
-$ xgen g --s model user demodb 127.0.0.1 root 123 3306;
+$ xgen g --s model tablename demodb 127.0.0.1 root 123 3306;
 ```
+
+client 端单个js代码
+```bash
+$ xgen g --c model tablename demodb 127.0.0.1 root 123 3306;
+```
+
 #### option
 
 ```bash
-  Usage: xgen g <command> [options]
+  Usage: xgen g [options] <command>
 
   Options:
 
@@ -58,9 +66,11 @@ $ xgen g --s model user demodb 127.0.0.1 root 123 3306;
 
   Commands:
 
-    model         生成model相关文件
-    service       生成sercice相关文件
-
+    model         生成model相关文件 (server or client)
+    service       生成service相关文件 (server or client)
+    route         生成route文件 (client)
+    component     生成component文件 (client)
+    all           生成全部文件 (client)
 ```
 
 ## License
