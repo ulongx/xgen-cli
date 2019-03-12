@@ -1,0 +1,292 @@
+<#import "layout/layout.ftl" as layout/>
+<#import "layout/pagination.html" as page/>
+<@layout.page selId="{{toUpCaseF tablename}}">
+
+<div class="content">
+    <ol class="header_nav">
+        <li><span class="icon-home"></span></li>
+        <li><a href="#">所有的表</a></li>
+        <li><a href="#">{{toUpCase tablename}}</a></li>
+    </ol>
+    <div class="row">
+        <form id="searchForm" action="${cpath}/tables/list{{toUpCase tablename}}" method="post">
+
+            <div class="col-md-9">
+                <div class="col-xs-6">
+                    <div class="form-input">
+                        <input type="text" name="keyword" class="btn inputBtn" value="${keyword!}"/>
+                        <span class="placeholder">请输入关键字</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <div class="right">
+                    <input type="submit" class="btn blueBtn" value="查询">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <div class="block">
+                <div class="table-responsive">
+                    <table class="table vCenter">
+                        <thead>
+                            <tr>
+                                <th width="5%" class="text-center">No.</th>
+                                {{#rows}}
+                                <th width="10%" class="text-center">{{column_comment}}</th>
+                                {{/rows}}
+                                <th width="10%" class="text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <#if (result.data?size > 0) >
+                            <#list result.data as item>
+                            <tr>
+                              <td class="text-center">${item_index+1}</td>
+                              {{#rows}}
+                                {{#switch data_type}}
+                                {{#case 'varchar'}}
+                                  <td class="text-center">${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'char'}}
+                                  <td class="text-center">${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'int'}}
+                                  <td class="text-center">${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'bigint'}}
+                                  <td class="text-center">${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'date'}}
+                                  <td class="text-center">${(item.{{toUpCaseF column_name}}?string("yyyy-MM-dd"))!}</td>
+                                {{/case}}
+                                {{#case 'timestamp'}}
+                                  <td class="text-center">${(item.{{toUpCaseF column_name}}?string("yyyy-MM-dd"))!}</td>
+                                {{/case}}
+                                {{#case 'datetime'}}
+                                  <td class="text-center">${(item.{{toUpCaseF column_name}}?string("yyyy-MM-dd"))!}</td>
+                                {{/case}}
+                                {{#case 'float'}}
+                                  <td class="text-center">${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'double'}}
+                                  <td class="text-center">${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'decimal'}}
+                                  <td class="text-center">${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{/switch}}
+                              {{/rows}}
+                                <td class="text-center">
+                                    <a href="javascript:;" class="btn blue-grey" id="edit_${item.id}"><i class="icon-pencil"></i></a>
+                                    <a href="javascript:;" class="btn blue-grey" id="del_${item.id}"><i class="icon-trash"></i></a>
+                                </td>
+                            </tr>
+                            </#list>
+                        <#else>
+                            <tr>
+                                <td colspan="{{addTwo rows.length}}" class="text-center">查询结果为空，请输入查询条件继续！</td>
+                            </tr>
+                        </#if>
+
+                        </tbody>
+                        <tfoot>
+                        <th colspan="{{addTwo rows.length}}">
+                            <div class="left"><a href="javascript:;" class="btn greenBtn" id="createBtn">新增</a></div>
+                            <div class="right">
+                                <@page.paging pagination=result.page action="/tables/list{{toUpCase tablename}}"/>
+                            </div>
+                        </th>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="pop-compose" id="newItem">
+    <div class="pop-dialog">
+        <div class="pop-content">
+            <div class="pop-header">
+                <input type="button" class="close" value="×"/>
+                <h3 class="modal-title">{{toUpCase tablename}}</h3>
+            </div>
+            <div class="pop-body">
+                <form id="pop-createForm">
+                    <input type="hidden" id="pop_id" name="id"/>
+                    {{#rows}}
+                      {{#switch data_type}}
+                      {{#case 'varchar'}}
+                      <div class="form-input">
+                          <input type="text" id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" class="btn inputBtn"/>
+                          <span class="placeholder">{{column_comment}}</span>
+                      </div>
+                      {{/case}}
+                      {{#case 'char'}}
+                        <div class="form-input">
+                          <input type="text" id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" class="btn inputBtn"/>
+                          <span class="placeholder">{{column_comment}}</span>
+                      </div>
+                      {{/case}}
+                      {{#case 'int'}}
+                        <div class="form-input">
+                          <input type="text" id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" class="btn inputBtn"/>
+                          <span class="placeholder">{{column_comment}}</span>
+                      </div>
+                      {{/case}}
+                      {{#case 'bigint'}}
+                        <div class="form-input">
+                          <input type="text" id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" class="btn inputBtn"/>
+                          <span class="placeholder">{{column_comment}}</span>
+                      </div>
+                      {{/case}}
+                      {{#case 'date'}}
+                      <div class="form-input" id="datePicker">
+                          <div class="form-dateIcon">
+                              <a href="javascript:;" class="btn inputBtn"><i class="icon-calendar"></i></a>
+                          </div>
+                          <input type="text" id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" class="btn inputBtn"/>
+                          <span class="placeholder">{{column_comment}}</span>
+                      </div>
+                      {{/case}}
+                      {{#case 'timestamp'}}
+                      <div class="form-input" id="datePicker">
+                          <div class="form-dateIcon">
+                              <a href="javascript:;" class="btn inputBtn"><i class="icon-calendar"></i></a>
+                          </div>
+                          <input type="text" id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" class="btn inputBtn"/>
+                          <span class="placeholder">{{column_comment}}</span>
+                      </div>
+                      {{/case}}
+                      {{#case 'datetime'}}
+                      <div class="form-input" id="datePicker">
+                          <div class="form-dateIcon">
+                              <a href="javascript:;" class="btn inputBtn"><i class="icon-calendar"></i></a>
+                          </div>
+                          <input type="text" id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" class="btn inputBtn"/>
+                          <span class="placeholder">{{column_comment}}</span>
+                      </div>
+                      {{/case}}
+                      {{#case 'float'}}
+                        <div class="form-input">
+                          <input type="text" id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" class="btn inputBtn"/>
+                          <span class="placeholder">{{column_comment}}</span>
+                      </div>
+                      {{/case}}
+                      {{#case 'double'}}
+                        <div class="form-input">
+                          <input type="text" id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" class="btn inputBtn"/>
+                          <span class="placeholder">{{column_comment}}</span>
+                      </div>
+                      {{/case}}
+                      {{#case 'decimal'}}
+                        <div class="form-input">
+                          <input type="text" id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" class="btn inputBtn"/>
+                          <span class="placeholder">{{column_comment}}</span>
+                      </div>
+                      {{/case}}
+                      {{/switch}}
+                    {{/rows}}
+                </form>
+            </div>
+            <div class="pop-footer">
+                <div class="right">
+                    <input type="button" class="btn greyBtn cancel" value="取消">
+                    <input type="button" class="btn orangeBtn" id="btnSave" value="保存">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var popShow=function (typeStr) {
+            $('.modal-title').html(typeStr);
+            $('.form-input').find('input').inputPlaceholder();
+            $('#newItem').css('display', 'table');
+        }
+
+        $('body').on('click','#createBtn',function () {
+            $('#pop-createForm')[0].reset();
+            popShow('添加');
+        });
+
+        $("a[id^='edit_']").click(function (event) {
+            var id = this.id.substring(5);
+            $('#pop_id').val(id);
+            lockUI();
+            $.ajax({
+                type: "POST",
+                url: "${cpath}/tables/get{{toUpCase tablename}}ById/"+id,
+                dataType: "json",
+                success: function(result){
+                    unLockUI();
+                    if(result.success){
+                      {{#rows}}
+                        $('#pop_{{toUpCaseF column_name}}').val(result.obj.{{toUpCaseF column_name}});
+                      {{/rows}}
+                        popShow('编辑');
+                    }else{
+                        MessageBox.error('提示', '数据获取异常');
+                    }
+                },
+                error: function(){
+                    unLockUI();
+                    MessageBox.error('提示', '数据获取异常');
+                }
+            });
+        });
+
+        $("a[id^='del_']").click(function (event) {
+            var id = this.id.substring(4);
+            $('#pop_id').val(id);
+            $.ajax({
+                type: "POST",
+                url: "${cpath}/tables/del{{toUpCase tablename}}ById/"+id,
+                dataType: "json",
+                success: function(result){
+                    if(result.success){
+                        MessageBox.success('提示', '删除成功');
+                        location.reload();
+                    }else{
+                        MessageBox.error('提示', '删除出错');
+                    }
+                },
+                error: function(){
+                    MessageBox.error('提示', '删除出错');
+                }
+            });
+        });
+
+        $('#btnSave').click(function () {
+            var dataJson = $("#pop-createForm").serialize();
+            lockUI();
+            $.ajax({
+                type: "POST",
+                url: "${cpath}/tables/save{{toUpCase tablename}}",
+                data: dataJson,
+                dataType: "json",
+                success: function(result){
+                    unLockUI();
+                    if(result.success){
+                        $('#newItem').css('display', 'none');
+                        MessageBox.success('提示', '保存成功');
+                        location.reload();
+                    }else{
+                        MessageBox.error('提示', result.msg);
+                    }
+                },
+                error: function(r){
+                    unLockUI();
+                    MessageBox.error('提示', '系统异常，请联系系统管理员');
+                }
+            });
+        });
+    });
+</script>
+
+</@layout.page>

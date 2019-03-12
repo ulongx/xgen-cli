@@ -1,0 +1,90 @@
+import React, { PropTypes } from 'react';
+import { Form, Input, Modal, Radio, Select, message } from 'antd';
+
+const FormItem = Form.Item;
+const Option = Select.Option;
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
+
+const formItemLayout = {
+  labelCol: {
+    span: 3
+  },
+  wrapperCol: {
+    span: 20
+  },
+};
+
+const {{toUpCase namespace}}Modal = ({
+  visible,
+  item = {},
+  onOk,
+  onCancel,
+  form: {
+    getFieldDecorator,
+    validateFields,
+    getFieldsValue,
+    },
+  }) => {
+  function handleOk() {
+    validateFields((errors,fieldsValue) => {
+      if (errors) {
+        return;
+      }
+      onOk(fieldsValue);
+      message.success('保存成功.');
+    });
+  }
+
+  function checkNumber(rule, value, callback) {
+    if (!value) {
+      callback(new Error('联系电话未填写'));
+    }
+    if (!/^[\d]{1,11}$/.test(value)) {
+      callback(new Error('联系电话不合法'));
+    } else {
+      callback();
+    }
+  }
+
+  const modalOpts = {
+    title: '编辑',
+    visible,
+    onOk: handleOk,
+    onCancel,
+    width: 600,
+  };
+
+  return (
+    <Modal {...modalOpts}>
+      <Form horizontal>
+        {{#listTable rows}}
+          <FormItem
+            label="{{columncomment}}:"
+            hasFeedback
+            {...formItemLayout}
+          >
+            {getFieldDecorator('{{columnname}}', {
+              initialValue: item.{{columnname}},
+              rules: [
+                { required: true, message: '{{columncomment}}未填写' },
+              ],
+            })(
+              <Input type="text" placeholder="请输入{{columncomment}}"/>
+            )}
+          </FormItem>
+        {{/listTable}}
+      </Form>
+    </Modal>
+  );
+};
+
+{{toUpCase namespace}}Modal.propTypes = {
+  visible: PropTypes.any,
+  form: PropTypes.object,
+  item: PropTypes.object,
+  onOk: PropTypes.func,
+  onCancel: PropTypes.func,
+};
+
+export default Form.create()({{toUpCase namespace}}Modal);

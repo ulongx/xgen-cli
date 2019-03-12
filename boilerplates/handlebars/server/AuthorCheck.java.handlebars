@@ -1,0 +1,65 @@
+package {{packagename}}.config;
+
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+import {{packagename}}.utils.Constants;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import com.mapath.util.auth.page.MenuPage;
+import com.mapath.util.auth.page.SysUserPage;
+
+/**
+ * Created by xgen-cli on {{currentdate}}.
+ */
+public class AuthorCheck implements HandlerInterceptor {
+
+    @Override
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, Object handler, Exception ex) throws Exception {
+
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest req, HttpServletResponse res, Object handler, ModelAndView modelAndView) throws Exception {
+
+    }
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse res, Object handler) throws Exception {
+        boolean result = true;
+        String contextPath = request.getContextPath();
+        String requestUri = request.getRequestURI();
+        String accessUrl = requestUri.substring(contextPath.length());
+
+        Object u = request.getSession().getAttribute(Constants.SESSION_USER);
+        if(u==null){
+            //到登录
+            result=false;
+            res.sendRedirect(request.getRequestURL().toString().replaceAll(request.getServletPath(), "") + "/");
+        }else {
+            result = true;
+            request.getSession().setAttribute(Constants.CUR_URL, accessUrl);
+
+            List<MenuPage> menus = ((SysUserPage)u).getAuthorizedMenus();
+            if (menus != null && !menus.isEmpty()){
+                for (MenuPage m : menus){
+                    for (MenuPage sonM : m.getChildren()){
+                        if (accessUrl.equals(sonM.getUrl())){
+                            request.getSession().setAttribute(Constants.CURRENT_MENU, sonM.getId());
+                            request.getSession().setAttribute(Constants.CURRENT_PARENT_MENU, m.getId());
+                            break;
+                        }
+                    }
+                }
+            }
+            /*下面两个放到session，是为了第一次进来时，进入index页面的时候 后面如果进入其子菜单里面的路径，只要不和 /tables/index 相等，则不再进行对cur_menu 等赋值，
+            * 因此，其左边的slidebar的显示还是原来点进来的那个菜单高亮*/
+            if ("/dashboard".equals(accessUrl)){
+                request.getSession().setAttribute(Constants.CURRENT_MENU, "index");
+                request.getSession().setAttribute(Constants.CURRENT_PARENT_MENU, "index");
+            }
+        }
+
+        return result;
+    }
+}

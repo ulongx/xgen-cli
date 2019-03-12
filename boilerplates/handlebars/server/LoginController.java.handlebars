@@ -1,0 +1,78 @@
+package {{packagename}}.controller;
+
+import {{packagename}}.utils.Constants;
+import com.mapath.util.auth.page.SysUserPage;
+import com.mapth.ms.utils.Json;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+/**
+ * 登录
+ * Created by xgen-cli on {{currentdate}}.
+ */
+@Controller
+@RequestMapping(value = {"/login","/",""})
+public class LoginController {
+
+    @RequestMapping(method = RequestMethod.GET)
+    public String toLogin() {
+        return "login";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value={"dologin"})
+    public String login(@Param("userId") String userId, @Param("passWord") String passWord, HttpSession session, Model model){
+      if ("admin".equalsIgnoreCase(userId) && "123".equalsIgnoreCase(passWord)) {
+        SysUserPage sessionUser = new SysUserPage();
+        sessionUser.setIds(userId);
+        session.setAttribute(Constants.SESSION_USER,sessionUser);
+      } else {
+          model.addAttribute("userId",userId);
+          model.addAttribute("passWord",passWord);
+          model.addAttribute("errMessage","用户名或密码错误！");
+          return "login";
+      }
+//       SysUserPage sessionUser = sysUserService.validateUser(userId,passWord);
+//       if (sessionUser != null) {
+//           MpUserRolePage mpUserRole = accountService.getMpUserRoleByUserId(sessionUser.getId());
+//           if(!Constants.MP_ROLE_ADMIN_ID.equals(mpUserRole.getRoleId())){
+//               model.addAttribute("account",account);
+//               model.addAttribute("password",password);
+//               model.addAttribute("errMessage","您没有权限登陆！");
+//               return "login";
+//           }
+//           if (StringUtils.isBlank(sessionUser.getUsername())){
+//               sessionUser.setUsername(sessionUser.getLoginId());
+//           }
+//           session.setAttribute(Constants.SESSION_USER,sessionUser);
+//       }else {
+//           model.addAttribute("account",account);
+//           model.addAttribute("password",password);
+//           model.addAttribute("errMessage","用户名或密码错误！");
+//           return "login";
+//       }
+        return "dashboard";
+    }
+
+    /**
+     * 退出登录
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST, value={"logout"})
+    @ResponseBody
+    public Json logout(Model model, HttpServletRequest request, HttpSession session){
+        Json objJson = new Json();
+        if (request.getSession().getAttribute(Constants.SESSION_USER) != null) {
+            request.getSession().removeAttribute(Constants.SESSION_USER);
+        }
+        objJson.setSuccess(true);
+        return objJson;
+    }
+}

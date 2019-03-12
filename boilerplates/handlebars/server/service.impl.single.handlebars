@@ -1,0 +1,69 @@
+package {{packagename}}.service.impl;
+
+
+import {{packagename}}.mapper.{{toUpCase tablename}}Mapper;
+import {{packagename}}.page.{{toUpCase tablename}}Page;
+import {{packagename}}.model.{{toUpCase tablename}};
+import {{packagename}}.service.{{toUpCase tablename}}Service;
+import {{packagename}}.exception.ServiceException;
+import com.mapath.util.pagination.model.DataGrid;
+import com.mapth.ms.utils.UUID;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+/**
+ * {{toUpCase tablename}}service impl
+ * Created by xgen-cli on {{currentdate}}.
+ */
+@Service("{{toUpCaseF tablename}}Service")
+public class {{toUpCase tablename}}ServiceImpl implements {{toUpCase tablename}}Service {
+
+	@Autowired
+	private {{toUpCase tablename}}Mapper {{toUpCaseF tablename}}Mapper;
+
+
+	/**================== {{tablecomment}} ==================*/
+  @Override
+  public DataGrid<{{toUpCase tablename}}> list{{toUpCase tablename}}sByKeyword({{toUpCase tablename}}Page page) {
+      List<{{toUpCase tablename}}> {{toUpCaseF tablename}}s = {{toUpCaseF tablename}}Mapper.list{{toUpCase tablename}}ByKeyword(page);
+      DataGrid<{{toUpCase tablename}}> dataGrid = new DataGrid({{toUpCaseF tablename}}s, page);
+      return dataGrid;
+  }
+
+  @Override
+  public {{toUpCase tablename}} get{{toUpCase tablename}}ById(String id) {
+      return {{toUpCaseF tablename}}Mapper.get{{toUpCase tablename}}ById(id);
+  }
+
+  @Transactional
+  public {{toUpCase tablename}} save{{toUpCase tablename}}({{toUpCase tablename}} {{toUpCaseF tablename}}) {
+      if (StringUtils.isNotBlank({{toUpCaseF tablename}}.getId())) {
+          {{toUpCaseF tablename}}Mapper.update{{toUpCase tablename}}({{toUpCaseF tablename}});
+      } else {
+          /*if (StringUtils.isBlank({{toUpCaseF tablename}}.getId())) {
+              throw new ServiceException("{{toUpCaseF tablename}} id 不能为空");
+          }*/
+          {{toUpCaseF tablename}}.setId(UUID.uuid32());
+          //{{toUpCaseF tablename}}.setIsDelete("0");
+          {{toUpCaseF tablename}}Mapper.add{{toUpCase tablename}}({{toUpCaseF tablename}});
+      }
+
+      return {{toUpCaseF tablename}};
+  }
+
+  @Override
+  public void del{{toUpCase tablename}}ById(String[] ids) {
+      {{toUpCaseF tablename}}Mapper.delete{{toUpCase tablename}}ByIds(ids);
+  }
+
+  @Override
+  public void delLogic{{toUpCase tablename}}ById(String[] ids) {
+      {{toUpCaseF tablename}}Mapper.deleteLogic{{toUpCase tablename}}ByIds(ids);
+  }
+
+
+}

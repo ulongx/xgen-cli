@@ -1,0 +1,20 @@
+.shop {
+	-webkit-animation: glow 800ms ease-out infinite alternate;
+	-moz-animation: glow 800ms ease-out infinite alternate;
+	-o-animation: glow 800ms ease-out infinite alternate;
+	-ms-animation: glow 800ms ease-out infinite alternate;
+	animation: glow 800ms ease-out infinite alternate;
+	border-color: rgba(255, 18, 45, 0.87);
+	box-shadow: 0 0 5px rgba(255, 12, 0, 0.52), inset 0 0 5px rgba(255, 255, 255, 0.09), 0 2px 0 rgba(0, 0, 0, 0);
+	color: #ff0c08;
+	outline: none;
+}
+
+@keyframes glow {
+    0% {
+		box-shadow: 0 0 5px rgba(255, 12, 0, 0.66), inset 0 0 5px rgba(255, 12, 0, 0.1), 0 2px 0 rgba(0, 0, 0, 0);
+    }
+    100% {
+		box-shadow: 0 0 20px rgb(255, 0, 5), inset 0 0 10px rgba(255, 12, 0, 0.4), 0 2px 0 rgba(0, 0, 0, 0);
+    }
+}

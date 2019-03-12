@@ -1,0 +1,30 @@
+/*
+ 通过 https://cdn.baomitu.com/index/fonts 生成的谷歌自体库css
+ */
+/* noto-sans-normal - latin */
+@font-face {
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: regular;
+    src: url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-regular.eot'); /* IE9 Compat Modes */
+    src: local('Noto Sans'), local('NotoSans-Normal'),
+    url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+    url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-regular.woff') format('woff'), /* Modern Browsers */
+    url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-regular.svg#NotoSans') format('svg'); /* Legacy iOS */
+}
+
+/* noto-sans-normal - latin */
+@font-face {
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-700.eot'); /* IE9 Compat Modes */
+    src: local('Noto Sans'), local('NotoSans-Normal'),
+    url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-700.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-700.woff2') format('woff2'), /* Super Modern Browsers */
+    url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-700.woff') format('woff'), /* Modern Browsers */
+    url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-700.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('//lib.baomitu.com/fonts/noto-sans/noto-sans-v6-latin-700.svg#NotoSans') format('svg'); /* Legacy iOS */
+}

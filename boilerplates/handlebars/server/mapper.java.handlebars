@@ -1,0 +1,29 @@
+package {{packagename}}.mapper;
+
+import {{packagename}}.model.{{toUpCase tablename}};
+import {{packagename}}.page.{{toUpCase tablename}}Page;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+/**
+ * {{tablecomment}}
+ * Created by xgen-cli on {{currentdate}}.
+ */
+ @Mapper
+public interface {{toUpCase tablename}}Mapper {
+
+  List<{{toUpCase tablename}}> list{{toUpCase tablename}}({{toUpCase tablename}}Page page);
+
+  {{toUpCase tablename}} get{{toUpCase tablename}}ById(String id);
+
+  void add{{toUpCase tablename}}({{toUpCase tablename}} {{toUpCaseF tablename}});
+
+  void update{{toUpCase tablename}}({{toUpCase tablename}} {{toUpCaseF tablename}});
+
+  void delete{{toUpCase tablename}}ByIds(String[] ids);
+
+  void deleteLogic{{toUpCase tablename}}ByIds(String[] ids);
+
+  List<{{toUpCase tablename}}> list{{toUpCase tablename}}ByKeyword({{toUpCase tablename}}Page page);
+
+}

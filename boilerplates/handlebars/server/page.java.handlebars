@@ -1,0 +1,20 @@
+package {{packagename}}.page;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import {{packagename}}.model.{{toUpCase tablename}};
+import com.mapath.util.pagination.model.PageInfo;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+/**
+ * {{tablecomment}}
+ * Created by xgen-cli on {{currentdate}}.
+ */
+ @SuppressWarnings("serial")
+ @JsonIgnoreProperties(ignoreUnknown = true)
+ @EqualsAndHashCode(callSuper = false)
+ @Data
+public class {{toUpCase tablename}}Page extends {{toUpCase tablename}} {
+  private PageInfo pageInfo;
+  private String ids;
+  private String keyword;
+}

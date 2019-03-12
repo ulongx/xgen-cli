@@ -1,0 +1,129 @@
+<#global cpath=rca.contextPath/>
+<#macro page selId="dash">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"    "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>Spring Boot Project</title>
+
+        <link rel="stylesheet" href="${cpath}/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="${cpath}/css/jquery.mCustomScrollbar.css"/>
+        <link rel="stylesheet" href="${cpath}/css/select2.min.css"/>
+        <link rel="stylesheet" href="${cpath}/css/datepicker.min.css"/>
+        <link rel="stylesheet" href="${cpath}/css/basic-gray.css"/>
+        <link rel="stylesheet" href="${cpath}/css/pnotify.custom.min.css"/>
+
+        <script type="text/javascript" src="${cpath}/js/jquery-3.1.0.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/select2.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/datepicker.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/pnotify.custom.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/jquery.blockUI.js"></script>
+        <script type="text/javascript" src="${cpath}/js/message.box.js"></script>
+
+        <script type="text/javascript" src="${cpath}/js/main.js"></script>
+
+    </head>
+    <body>
+        <!-- nav bar -->
+        <div class="nav-bar">
+            <h1 class="title left"><img src="${cpath}/images/logo_s.png" alt="GTR"/><span>Spring Boot Project</span>
+            </h1>
+            <ul class="bar-right">
+                <li class="name">
+                    <div class="name-info left">welcome, <span class="orange">Dave Gandy</span><br/>
+                        2016-06-01
+                    </div>
+                    <div class="name-img left"><img src="${cpath}/images/head.jpg"/></div>
+                </li>
+                <li class="login-out"><a href=""><span class="icon-off"></span></a></li>
+            </ul>
+        </div>
+        <!-- nav left -->
+        <div class="sidebar">
+            <ul class="sidebar_menu" id="sidebar_menu">
+                <li>Welcome</li>
+                <li class="open">
+                    <a class="sidebar_title" href="javascript:void(0);">
+                        <span class="icon-group"></span>
+                        <span class="menu_title">All Menu</span>
+                        <span class="icon-caret-right"></span>
+                    </a>
+                    <ol>
+                        {{#rows}}
+                        <li><a href="${cpath}/tables/list{{toUpCase tablename}}" class="active">{{toUpCase tablename}}</a></li>
+                        {{/rows}}
+                    </ol>
+                </li>
+            </ul>
+        </div>
+
+        <div class="pop-compose" style="z-index: 10002;" id="Confirm">
+            <div class="pop-dialog">
+                <div class="pop-content">
+                    <div class="pop-header">
+                        <input type="button" class="close" value="×"/>
+
+                        <h3 class="modal-title">确认</h3>
+                    </div>
+                    <div class="pop-body" id="Confirm_Information">
+                        你确定<span class="red">删除</span>这些数据吗？
+                    </div>
+                    <input type="hidden"/>
+
+                    <div class="pop-footer">
+                        <div class="right">
+                            <input type="button" class="btn greyBtn cancel" value="取消">
+                            <input type="button" class="btn orangeBtn" value="确定" id="confirmOkBtn">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- content -->
+        <#nested/>
+        <!-- content -->
+
+        <script type="text/javascript">
+            $(function () {
+                // slide bar js
+                sideBar();
+                $('body').on('click','.login-out',function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "${cpath}/login/logout",
+                        data: {},
+                        dataType: "json",
+                        success: function (result) {
+                            window.top.location.href = "${cpath}/index";
+                        },
+                        error: function (r) {
+                            MessageBox.error('提示', '失败了，请再试一下!');
+                        }
+                    });
+                })
+
+                // search box input placeholder
+                $('.form-input').find('input').inputPlaceholder();
+                $('.form-txt').find('textarea').inputPlaceholder();
+
+                // close btn js
+                $('.pop-header').find('.close').closePopCompose();
+                $('.pop-footer').find('.cancel').closePopCompose();
+
+                // date picker
+                $('#datePicker').find('a').click(function () {
+                    $(this).parent().parent().find('input').focus();
+                }).parents('#datePicker').find('input').datepicker({
+                    autoclose: true,
+                    todayHighlight: true
+                });
+                $('#datePicker').on("changeDate", function () {
+                    $(this).find('input').inputPlaceholder();
+                });
+            });
+        </script>
+    </body>
+</html>
+</#macro>

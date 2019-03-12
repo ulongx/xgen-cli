@@ -1,0 +1,30 @@
+import './index.html';
+import dva from 'dva';
+import { browserHistory } from 'dva/router';
+import createLoading from 'dva-loading';
+// 1. Initialize
+//const app = dva({
+//  history: browserHistory
+//});
+const app = dva();
+
+// 2. Plugins
+//app.use();
+
+// 3. Model
+app.model(require('./models/app'))           //管理中心
+app.model(require('./models/password'));
+app.model(require('./models/users'));        //用户管理
+app.model(require('./models/dashboard'))
+
+{{#payload}}
+app.model(require('./models/{{toUpCaseF tablename}}s'));  //{{tablecomment}}
+{{/payload}}
+
+
+
+// 4. Router
+app.router(require('./router'));
+
+// 5. Start
+app.start('#root');

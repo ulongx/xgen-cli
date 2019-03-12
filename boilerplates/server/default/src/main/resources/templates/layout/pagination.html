@@ -1,0 +1,57 @@
+<#macro paging pagination action method="post">
+
+<#if pagination.total gt 0>
+	<form id="pagination-form" action="${cpath}${action}" method="${method}">
+		<ul class="pageNav" id="pagUl">
+			<#if pagination.pageNo gt 1>
+				 <li class="pre"><a href="javascript:void(0)" toPage="${pagination.pageNo-1}"><i class="icon-angle-left"></i></a></li>
+				 <#if pagination.pageNo gt 3>
+					<li><a href="javascript:void(0)" toPage="1">1</a></li>
+				 </#if>
+				 <#if pagination.pageNo gt 4>
+					<li><span>...</span></li>
+				 </#if>
+			<#else>
+				<li class="pre disabled"><a href="javascript:void(0)"><i class="icon-angle-left"></i></a></li>
+			</#if>
+
+			<#list pagination.pageArr as p>
+				<#if p==pagination.current>
+					<li class="active"><a href="javascript:void(0)">${p}</a></li>
+				<#else>
+					<li><a href="javascript:void(0)" toPage="${p}">${p}</a></li>
+				</#if>
+			</#list>
+
+			<#if pagination.pageCount gt pagination.pageNo>
+				<#if pagination.pageCount gt (pagination.pageNo+3)>
+					<li><span>...</span></li>
+				</#if>
+				<#if pagination.pageCount gt (pagination.pageNo+2)>
+					<li><a href="javascript:void(0)" toPage="${pagination.pageCount}">${pagination.pageCount}</a></li>
+				</#if>
+				<li class="next"><a href="javascript:void(0)" toPage="${pagination.pageNo+1}"><i class="icon-angle-right"></i></a></li>
+			<#else>
+				<li class="next disabled"><a href="javascript:void(0)"><i class="icon-angle-right"></i></a></li>
+			</#if>
+		</ul>
+		<input type="hidden" name="pageInfo.page" id="pageNo" value="${pagination.pageNo}">
+		<input type="hidden" name="pageInfo.totalPage" id="totalPage" value="${pagination.pageCount}">
+	</form>
+</#if>
+    <script type="text/javascript">
+        $('#pagUl').on('click', 'a', function () {
+            var target = $(this);
+            var toPage = target.attr("toPage");
+            if(typeof(toPage)=="undefined") {
+            	// console.log('click current page');
+            } else {
+            	// console.log('goto page:'+toPage);
+            	$('#pageNo').val(toPage);
+							$('#pagination-form').submit();
+            }
+        });
+
+    </script>
+
+</#macro>

@@ -1,0 +1,356 @@
+<#import "layout/layout.ftl" as layout/>
+<#import "layout/pagination.html" as page/>
+<@layout.htmlHead title="项目维护" selId="{{toUpCase tablename}}">
+
+</@layout.htmlHead>
+<@layout.htmlBody>
+<div class="container">
+    <!-- Page-Title -->
+    <div class="row">
+        <div class="col-sm-12">
+            <h4 class="page-title">{{toUpCase tablename}}</h4>
+            <ol class="breadcrumb">
+                <li><a href="#">首页</a></li>
+                <li><a href="#">...</a></li>
+                <li class="active">{{toUpCase tablename}}</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card-box">
+                <div class="row m-b-20">
+                    <div class="col-md-10">
+                        <form class="form-inline" id="searchForm" action="${cpath}/tables/list{{toUpCase tablename}}" method="post">
+                            <div class="form-group">
+                                <label class="sr-only" for="inputKey">关键字</label>
+                                <input type="text" name="keyword" class="form-control" value="${keyword!}" id="inputKey" placeholder="输入关键字查询">
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" id="search_status" name="status" data-placeholder="状态">
+                                    <option value="">全部</option>
+                                    <option value="0">状态1</option>
+                                    <option value="1">状态2</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-daterange input-group p-l-0">
+                                <input type="text" class="form-control" name="startDt" placeholder="开始日期" value=''/>
+                                <span class="input-group-addon bg-custom b-0 text-white">to</span>
+                                <input type="text" class="form-control" name="endDt" placeholder="结束日期" value=''/>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">查询 <i class="fa fa-search"></i></button>
+                        </form>
+                    </div>
+                    <div class="col-md-2 text-right">
+                        <button data-toggle="modal" data-target="#projectInfoModal" class="btn btn-icon btn-default waves-effect waves-light">新增 <i class="fa fa-plus-circle"></i></button>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="row p-l-r-10">
+                    <table class="table table-striped text-center table-hover">
+                        <thead>
+                        <tr>
+                            <th width="5%" class="text-center">No.</th>
+                            {{#rows}}
+                            <th class="text-center">{{column_comment}}</th>
+                            {{/rows}}
+                            <th width="10%" class="text-center">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <#if (result.data?size > 0) >
+                            <#list result.data as item>
+                            <tr>
+                                <td class="text-center">${item_index+1}</td>
+                              {{#rows}}
+                                {{#switch data_type}}
+                                {{#case 'varchar'}}
+                                  <td>${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'char'}}
+                                  <td>${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'int'}}
+                                  <td>${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'bigint'}}
+                                  <td>${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'date'}}
+                                  <td>${(item.{{toUpCaseF column_name}}?string("yyyy-MM-dd"))!}</td>
+                                {{/case}}
+                                {{#case 'timestamp'}}
+                                  <td>${(item.{{toUpCaseF column_name}}?string("yyyy-MM-dd"))!}</td>
+                                {{/case}}
+                                {{#case 'datetime'}}
+                                  <td>${(item.{{toUpCaseF column_name}}?string("yyyy-MM-dd"))!}</td>
+                                {{/case}}
+                                {{#case 'float'}}
+                                  <td>${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'double'}}
+                                  <td>${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{#case 'decimal'}}
+                                  <td>${item.{{toUpCaseF column_name}}!}</td>
+                                {{/case}}
+                                {{/switch}}
+                              {{/rows}}
+                                    <td class="actions">
+                                        <a id="edit_${item.id}" class="on-default edit-row" data-toggle="modal" data-target="#projectInfoModal"><span data-toggle="tooltip" data-original-title="编辑"><i class="fa fa-pencil"></i></span></a>
+                                        <a id="del_${item.id}" class="on-default remove-row" data-toggle="modal" data-target="#delModal"><span data-toggle="tooltip" data-original-title="删除"><i class="fa fa-trash-o"></i></span></a>
+                                    </td>
+                                </tr>
+                            </#list>
+                            <#else>
+                                <tr>
+                                    <td colspan="{{addTwo rows.length}}">查询结果为空，请输入查询条件继续！</td>
+                                </tr>
+                        </#if>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row p-l-r-10 text-right">
+                    <nav aria-label="...">
+                        <@page.paging pagination=result.page action="/tables/list{{toUpCase tablename}}"/>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="projectInfoModal" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:55%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">新增</h4>
+                </div>
+                <form id="pop-createForm" action="#" class="form-horizontal">
+                <div class="modal-body">
+                    <input type="hidden" id="pop_id" name="id"/>
+                    {{#rows}}
+                      {{#switch data_type}}
+                      {{#case 'varchar'}}
+                      <div class="form-group">
+                          <label class="col-md-2 control-label">{{column_comment}}：</label>
+                          <div class="col-md-10">
+                              <input id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" type="text" class="form-control" placeholder="请输入{{column_comment}}">
+                          </div>
+                      </div>
+                      {{/case}}
+                      {{#case 'char'}}
+                      <div class="form-group">
+                          <label class="col-md-2 control-label">{{column_comment}}：</label>
+                          <div class="col-md-10">
+                              <input id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" type="text" class="form-control" placeholder="请输入{{column_comment}}">
+                          </div>
+                      </div>
+                      {{/case}}
+                      {{#case 'int'}}
+                      <div class="form-group">
+                          <label class="col-md-2 control-label">{{column_comment}}：</label>
+                          <div class="col-md-10">
+                              <input id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" type="text" class="form-control" placeholder="请输入{{column_comment}}">
+                          </div>
+                      </div>
+                      {{/case}}
+                      {{#case 'bigint'}}
+                      <div class="form-group">
+                          <label class="col-md-2 control-label">{{column_comment}}：</label>
+                          <div class="col-md-10">
+                              <input id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" type="text" class="form-control" placeholder="请输入{{column_comment}}">
+                          </div>
+                      </div>
+                      {{/case}}
+                      {{#case 'date'}}
+                      <div class="form-group input-daterange">
+                          <label class="col-md-2 control-label">{{column_comment}}：</label>
+                          <div class="col-md-10">
+                              <input id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" type="text" class="form-control input-datePicke" placeholder="请输入{{column_comment}}">
+                          </div>
+                      </div>
+                      {{/case}}
+                      {{#case 'timestamp'}}
+                      <div class="form-group input-daterange">
+                          <label class="col-md-2 control-label">{{column_comment}}：</label>
+                          <div class="col-md-10">
+                              <input id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" type="text" class="form-control input-datePicke" placeholder="请输入{{column_comment}}">
+                          </div>
+                      </div>
+                      {{/case}}
+                      {{#case 'datetime'}}
+                      <div class="form-group input-daterange">
+                          <label class="col-md-2 control-label">{{column_comment}}：</label>
+                          <div class="col-md-10">
+                              <input id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" type="text" class="form-control input-datePicke" placeholder="请输入{{column_comment}}">
+                          </div>
+                      </div>
+                      {{/case}}
+                      {{#case 'float'}}
+                      <div class="form-group">
+                          <label class="col-md-2 control-label">{{column_comment}}：</label>
+                          <div class="col-md-10">
+                              <input id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" type="text" class="form-control" placeholder="请输入{{column_comment}}">
+                          </div>
+                      </div>
+                      {{/case}}
+                      {{#case 'double'}}
+                      <div class="form-group">
+                          <label class="col-md-2 control-label">{{column_comment}}：</label>
+                          <div class="col-md-10">
+                              <input id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" type="text" class="form-control" placeholder="请输入{{column_comment}}">
+                          </div>
+                      </div>
+                      {{/case}}
+                      {{#case 'decimal'}}
+                      <div class="form-group">
+                          <label class="col-md-2 control-label">{{column_comment}}：</label>
+                          <div class="col-md-10">
+                              <input id="pop_{{toUpCaseF column_name}}" name="{{toUpCaseF column_name}}" type="text" class="form-control" placeholder="请输入{{column_comment}}">
+                          </div>
+                      </div>
+                      {{/case}}
+                      {{/switch}}
+                    {{/rows}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info waves-effect waves-light">保存</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content  p-0 b-0">
+                <div class="panel panel-color panel-default">
+                    <div class="panel-heading">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                        <h3 class="panel-title text-dark">提示</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>确定删除这行数据么？</p>
+                        <div class="row text-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button id="del_YN" type="button" class="btn btn-primary">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Modal -->
+</div>
+</@layout.htmlBody>
+
+<@layout.javaScript>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var ifNotNull = function (data) {
+            if(data != '' && data != null && typeof data != 'undefined'){
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        var saveInfo = function () {
+            $.blockUI();
+            $.ajax({
+                type: "POST",
+                url: "${cpath}/tables/save{{toUpCase tablename}}",
+                dataType: "json",
+                data: $('#pop-createForm').serialize(),
+                success: function (result) {
+                    $.unblockUI();
+                    if (result.success){
+                        $.Message.success("创建成功");
+                        window.location.reload();
+                    } else {
+                        $.Message.error(result.msg);
+                    }
+
+                },
+                error: function (r) {
+                    $.unblockUI();
+                    $.Message.error('保存失败，请查看网络是否有问题');
+                }
+            });
+        };
+
+        var validform = function () {
+
+          {{#rows}}
+          if(!$('#pop_{{toUpCaseF column_name}}').val().length){
+              $.Message.error("{{column_comment}}不能为空");
+              return false;
+          }
+          {{/rows}}
+
+          return true;
+        };
+
+        $('.btn-info').on('click',function () {
+            if(validform()){
+                saveInfo();
+            }
+        });
+
+        $('a[id^="edit_"]').click(function () {
+            emptyData();
+            var id = this.id;
+            var projectId = id.split('_')[1];
+            $.ajax({
+                type: "POST",
+                url: "${cpath}/tables/get{{toUpCase tablename}}ById/"+id,
+                dataType: "json",
+                data:{"id":projectId},
+                success: function (result) {
+                    if (result.success){
+                      {{#rows}}
+                        $('#pop_{{toUpCaseF column_name}}').val(result.obj.{{toUpCaseF column_name}});
+                      {{/rows}}
+                    } else {
+                        $.Message.error(result.msg);
+                    }
+
+                },
+                error: function (r) {
+                    $.Message.error('保存失败，请查看网络是否有问题');
+                }
+            });
+        });
+
+        $("a[id^='del_']").click(function (event) {
+            var id = this.id.split("_")[1];
+            $('#del_YN').unbind();
+            $('#del_YN').click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "${cpath}/tables/del{{toUpCase tablename}}ById/"+id,
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.success) {
+                            location.reload();
+                        } else {
+                            $.Message.error('提示', '删除出错');
+                        }
+                    },
+                    error: function () {
+                        $.Message.error('提示', '删除出错');
+                    }
+                });
+            });
+        });
+
+    });
+</script>
+</@layout.javaScript>

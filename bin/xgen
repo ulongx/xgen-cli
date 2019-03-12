@@ -1,0 +1,108 @@
+#!/usr/bin/env node
+'use strict';
+/*
+主程序入口
+xuyunlong@mapath.com
+https://github.com/ulongx/xgen-cli
+*/
+const program = require('commander');
+const join = require('path').join;
+const exists = require('fs').existsSync;
+const spawn = require('win-spawn');
+const chalk = require('chalk');
+const error = chalk.red;
+
+program
+  .version(require('../package').version, '-v, --version')
+  .usage('<command> [options]')
+  .on('--help', printHelp)
+  .parse(process.argv);
+
+  const aliases = {
+    p: 'project',
+    s: 'server',
+    c: 'client',
+    g: 'generate'
+  };
+//获取第三及后面的参数
+const args = process.argv.slice(3);
+let subcmd = program.args[0];
+if (aliases[subcmd]){
+  subcmd = aliases[subcmd];
+}
+if (subcmd === 's') {
+  if (args.length < 7) {
+    console.error(error('你输入的参数不正确，请重新输入！'));
+    program.help();
+    process.exit(1);
+  }
+}else if(subcmd === 'p'){
+  if (args.length < 5) {
+    console.error(error('你输入的参数不正确，请重新输入！'));
+    program.help();
+    process.exit(1);
+  }
+}else if(subcmd === 'g'){
+  if (args.length < 8) {
+    console.error(error('你输入的参数不正确，请重新输入！'));
+    program.help();
+    process.exit(1);
+  }
+}
+
+if (!subcmd) {
+  program.help();
+} else {
+  const bin = executable(subcmd);
+  if (bin) {
+    wrap(spawn(bin, args, {stdio: 'inherit', customFds: [0, 1, 2]}));
+  } else {
+    program.help();
+  }
+}
+
+function wrap(sp) {
+  sp.on('close', function(code) {
+    process.exit(code);
+  });
+}
+
+function executable(subcmd) {
+  var file = join(__dirname, 'xgen-' + subcmd);
+  if (exists(file)) {
+    return file;
+  }
+}
+
+function printHelp() {
+  console.log('  Commands:');
+  console.log();
+  console.log('    server        在当前目录创建server端程序，短参数 "s" ');
+  console.log('    client        在当前目录创建client端程序，短参数 "c" ');
+  console.log('    project       创建一个工程包含server和client端，工程名字要和数据库名一致，短参数 "p" ');
+  console.log('    generate      在当前目录生成server或者client文件，短参数 "g" ');
+  console.log();
+  console.log('  所有参数可以使用 -h (或 --help)来查看使用方式.');
+  console.log();
+  console.log('  生成工程，默认主题:');
+  console.log('    xgen p app 127.0.0.1 root 1234 3306');
+  console.log('  生成工程，自定义主题:');
+  console.log('    xgen p -t blackgreen app 127.0.0.1 root 1234 3306');
+  console.log();
+  console.log('  生成server端，默认主题:');
+  console.log('    xgen s com.spring.demotest jar demodb 127.0.0.1 root 1234 3306');
+  console.log('    ->com.spring.demotest：  程序包名');
+  console.log('    ->jar：  spring的启动方式，分为jar 、 war 方式');
+  console.log();
+  console.log('  生成server端，自定义主题:');
+  console.log('    xgen s -t blackgreen com.spring.demotest jar demodb 127.0.0.1 root 1234 3306');
+  console.log('    ->com.spring.demotest：  程序包名');
+  console.log('    ->jar：  spring的启动方式，分为jar 、 war 方式');
+  console.log('    ->-t：  指定 html style view');
+  console.log('    ->blackgreen：  主题名称');
+  console.log();
+  console.log('  生成单个文件，默认主题:');
+  console.log('    xgen g -s model account com.spring.single demodb 127.0.0.1 root 1234 3306');
+  console.log('  生成单个文件，自定义主题:');
+  console.log('    xgen g -st blackgreen model account com.spring.single demodb 127.0.0.1 root 1234 3306');
+}

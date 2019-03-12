@@ -1,0 +1,141 @@
+<#global cpath=rca.contextPath xmlns="http://www.w3.org/1999/html">
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎使用 Mapath 后台管理系统</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <link href="${cpath}/js/plugins/datepicker/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/js/plugins/timpicker/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/js/plugins/select2/select2.min.css" rel="stylesheet" type="text/css">
+
+        <link href="${cpath}/css/bootstrap.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/css/core.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/css/font.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/css/menu.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/css/components.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/css/style.css" rel="stylesheet" type="text/css">
+    </head>
+
+    <body class="bg-accpunt-pages">
+        <!-- HOME -->
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="wrapper-page">
+                            <div class="account-pages">
+                                <div class="account-box">
+                                    <div class="account-logo-box">
+                                        <h2 class="text-uppercase text-center">
+                                            <a href="index.shtml" class="text-success">
+                                                <span><img src="${cpath}/images/logo_dark.png" alt="" height="40"></span>
+                                            </a>
+                                        </h2>
+                                    </div>
+                                    <div class="account-content">
+                                        <form class="form-horizontal" id="loginForm" action="#">
+
+                                            <div class="form-group m-b-20">
+                                                <div class="col-xs-12">
+                                                    <label for="userIdInput">用户名</label>
+                                                    <input class="form-control" id="userIdInput" value="admin_wd" required="" placeholder="请输入用户名">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group m-b-20">
+                                                <div class="col-xs-12">
+                                                    <label for="passWordInput">密码</label>
+                                                    <input class="form-control" id="passWordInput" type="password" value="123" required="" placeholder="请输入密码">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group text-center m-t-10">
+                                                <div class="col-xs-12">
+                                                    <button class="btn btn-md btn-block btn-primary waves-effect waves-light" type="button">登陆</button>
+                                                    <span class="red" id="errorMes"></span>
+                                                </div>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- jQuery  -->
+        <script src="${cpath}/js/jquery.min.js"></script>
+        <script src="${cpath}/js/bootstrap.min.js"></script>
+        <script src="${cpath}/js/metisMenu.min.js"></script>
+        <script src="${cpath}/js/jquery.slimscroll.js"></script>
+
+        <!-- plugins js  -->
+        <script src="${cpath}/js/plugins/select2/select2.min.js"></script>
+
+        <!-- app js  -->
+        <script src="${cpath}/js/jquery.app.js"></script>
+
+        <script type="text/javascript" src="${cpath}/js/jquery.blockUI.js"></script>
+        <script type="text/javascript" src="${cpath}/js/message.box.js"></script>
+
+        <script type="text/javascript">
+            $(function () {
+
+                $('#passWordInput').keyup(function(e){
+                    if(e.keyCode == 13){
+                        $('.btn-md').click();
+                    }
+                });
+
+                $('.btn-md').click(function(){
+                    var userId = $("#userIdInput").val();
+                    var passWord = $("#passWordInput").val();
+                    if (checkData()) {
+                        lockUI();
+                        $.ajax({
+                            type: "POST",
+                            url: "${cpath}/login/dologin",
+                            data: {"userId": userId, "passWord": passWord },
+                            dataType: "json",
+                            success: function (result) {
+                                $.unblockUI();
+                                if (result.success) {
+                                    window.location.href = '${cpath}/tables/index';
+                                } else {
+                                    $("#errorMes").html(result.msg);
+                                }
+                            },
+                            error: function (r) {
+                                $.unblockUI();
+                                $("#errorMes").html("用户名或密码错误!");
+                            }
+                        });
+                    }
+                });
+
+                var checkData = function () {
+                    var state = true;
+                    var userId = $("#userIdInput").val();
+                    var passWord = $("#passWordInput").val();
+                    if (userId == '' || userId == null){
+                        $("#errorMes").html('用户名不能为空！');
+                        state = false;
+                        return state;
+                    }else if (passWord == '' || passWord == null){
+                        $("#errorMes").html('密码不能为空！');
+                        state = false;
+                        return state;
+                    }
+                    return state;
+                }
+            });
+        </script>
+    </body>
+</html>

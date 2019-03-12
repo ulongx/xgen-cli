@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+'use strict';
+
+const program = require('commander');
+const join = require('path').join;
+const existsSync = require('fs').existsSync;
+const chalk = require('chalk');
+const error = chalk.red;
+const leftPad = require('left-pad');
+const mkdirpSync = require('fs-extra').mkdirpSync;
+
+program
+  .usage('[options] appName')
+  .option('-t, --themes', 'Generate files according to the theme')
+  .option('--no-install', 'Install dependencies after boilerplate, default: true')
+  .parse(process.argv);
+
+  let appNamePath = program.args[0];
+  let themeName = 'default';
+
+  if (program.themes) {
+    appNamePath = program.args[1];
+    themeName = program.args[0];
+  }
+
+  if (!appNamePath) {
+    program.help();
+  } else {
+    const appName = appNamePath.split('.').pop();
+    const destServer = join(process.cwd(), appName);
+    if (existsSync(destServer)) {
+      console.error(error('此目录为非空目录，请在一个空的目录里面执行命令！'));
+      process.exit(1);
+    }
+
+    mkdirpSync(destServer);
+    console.log(`${chalk.green.bold(leftPad('create', 12))} ${appName} theme name is ${themeName}`);
+
+
+    process.chdir(destServer);
+    require('../lib/init-server')(program,'s',themeName);
+    console.log(`${themeName} ----> ${appNamePath}`);
+  }

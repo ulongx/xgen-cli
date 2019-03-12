@@ -1,0 +1,93 @@
+#!/usr/bin/env node
+
+const program = require('commander');
+const join = require('path').join;
+const existsSync = require('fs').existsSync;
+const chalk = require('chalk');
+const error = chalk.red;
+const leftPad = require('left-pad');
+const mkdirpSync = require('fs-extra').mkdirpSync;
+const async = require('async');
+
+program
+  .usage('[options] appName')
+  .option('-t, --themes', 'Generate files according to the theme')
+  .option('--no-install', 'Install dependencies after boilerplate, default: true')
+  .parse(process.argv);
+
+  let appNamePath = program.args[0];
+  let themeName = 'default';
+
+  if (program.themes) {
+    appNamePath = program.args[1];
+    themeName = program.args[0];
+  }
+
+if (!appNamePath) {
+  program.help();
+} else {
+  const destServer = join(process.cwd(), appNamePath);
+  const destClient = join(process.cwd(), appNamePath+'-cli');
+  if (existsSync(destServer) || existsSync(destClient)) {
+    console.error(error('此目录为非空目录，请在一个空的目录里面执行命令！'));
+    process.exit(1);
+  }
+  mkdirpSync(destServer);
+  console.log(`${chalk.green.bold(leftPad('generate ', 12))} ${themeName}`);
+  mkdirpSync(destClient);
+  console.log(`${chalk.green.bold(leftPad('generate ', 12))} ${themeName+'-cli'}`);
+
+
+  process.chdir(destServer);
+  // Q.nfcall([require('../lib/init-server')(program),require('../lib/init-client')(program)])
+  // .then(function() {
+  //     // info('run', 'npm install');
+  //     console.log(`
+  //       Success! Created ${destClient}
+  //
+  //       在该目录中，您可以运行几个命令:
+  //       * npm install: 安装依赖.
+  //       * npm start: 启动开发服务器.
+  //       * npm run build: 编译打包应用程序.
+  //       * npm test: 运行测试.
+  //
+  //       我们建议你首先输入:
+  //       cd ${appName+'-cli'}
+  //       npm start
+  //
+  //       工作愉快,ulongx!`);
+  //       console.log();
+  //   });
+
+  async.waterfall([
+    function(callback) {
+        const s = require('../lib/init-server')(program, 'p', themeName);
+        if (s) {
+          callback(null, s);
+        }
+    },
+    function(onearg, callback) {
+      if (onearg) {
+        const s = require('../lib/init-client')(program,'p');
+        if (s) {
+          callback(null, s);
+        }
+      }
+    }
+  ], function(error, result) {
+    console.log(`
+      Success! Created ${destClient}
+
+      在该目录中，您可以运行几个命令:
+      * npm start: 启动开发服务器.
+      * npm run build: 编译打包应用程序.
+      * npm test: 运行测试.
+
+      我们建议你首先输入:
+      cd ${appName+'-cli'}
+      npm install
+      npm start
+
+      工作愉快,ulongx!`);
+  });
+}

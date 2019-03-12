@@ -1,0 +1,29 @@
+PROJECT = "{{dbname}}"
+
+all: build
+
+clean: ;@echo "clean ${PROJECT}....."; \
+    rm -rf {{dbname}} {{dbname}}-cli;
+
+xgenp: ;@echo "生成 ${PROJECT} 客户端和服务端....."; \
+	xgen p {{dbname}} {{url}} {{dbusername}} {{dbpassword}} {{port}};\
+	cd {{dbname}};\
+	mvn clean compile;\
+	cd ..;\
+	cd {{dbname}}-cli;\
+	cnpm install;
+
+xgens: ;@echo "生成 ${PROJECT} 服务端....."; \
+	rm -rf {{dbname}};\
+	xgen s {{dbname}} {{url}} {{dbusername}} {{dbpassword}} {{port}};\
+
+xgenc: ;@echo "生成 ${PROJECT} 客户端....."; \
+	rm -rf {{dbname}}-cli;\
+	xgen c {{dbname}} {{url}} {{dbusername}} {{dbpassword}} {{port}};
+
+build: ;@echo " ${PROJECT} building....."; \
+	cd {{dbname}};\
+	mvn clean compile;\
+	cd ..;\
+	cd {{dbname}}-cli;\
+	npm install;

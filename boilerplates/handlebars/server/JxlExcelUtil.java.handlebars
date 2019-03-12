@@ -1,0 +1,151 @@
+package {{packagename}}.utils;
+
+import jxl.Workbook;
+import jxl.WorkbookSettings;
+import jxl.format.Colour;
+import jxl.write.*;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * Excel通用操作类
+ * Created by xgen-cli on {{currentdate}}.
+ */
+public class JxlExcelUtil {
+
+	private static Log logger = LogFactory.getLog(JxlExcelUtil.class);
+
+	/**
+	 * 将 List 中的PO对象数据导出为 Excel 报表
+	 * @param response
+	 * @param dataList      ：数据源 List
+	 * @param titles        ：Excel 的标题行
+	 * @param fileName      ：导出的 Excel 文件名称（如需压缩,则为压缩文件名）,传入的文件名参数不要加后辍名
+	 * @throws Exception
+	 */
+	public static void exportExcel(HttpServletResponse response, List dataList, String[] titles, String fileName, String[] details)
+				throws Exception {
+		WritableCellFormat titleStyle = getTitleStyle();
+		//要导出的数据总行数
+		int rowCount = dataList.size();
+		int startRow = 0;
+		int sheetRowIndex = 0;
+
+		String contentType = "application/vnd.ms-excel";
+		String expFileName = (fileName+".xls");
+		expFileName = new String(expFileName.getBytes("GBK"),"iso-8859-1");
+
+		response.reset();
+		response.setContentType(contentType);
+		response.addHeader("Content-Disposition", "attachment;filename=" + expFileName);
+		OutputStream os = response.getOutputStream();
+
+		try {
+			WorkbookSettings wbs = new WorkbookSettings();
+			wbs.setLocale(Locale.PRC);
+
+			WritableWorkbook wwb = Workbook.createWorkbook(os,wbs);
+
+			WritableSheet ws = wwb.createSheet("Sheet1", 0);
+
+			//详情页报表，写入表头
+			if (details!=null) {
+				ws.setRowView(0, 500);
+				Label l1 = new Label(0, 0, details[0]);
+				ws.addCell(l1);
+				ws.setColumnView(0, 20);
+				Label l2 = new Label(1, 0, details[1]);
+				ws.addCell(l2);
+				ws.setColumnView(1, 20);
+				Label l3 = new Label(3, 0, details[2]);
+				ws.addCell(l3);
+				ws.setColumnView(3, 20);
+				Label l4 = new Label(4, 0, details[3]);
+				ws.addCell(l4);
+				ws.setRowView(2, 500);
+				ws.setColumnView(4, 20);
+				Label l5 = new Label(0, 2, "Unit(H)");
+				ws.addCell(l5);
+				Label l6 = new Label(1, 2, "Search Date:");
+				ws.addCell(l6);
+				String date = (StringUtils.isBlank(details[4])?"":(details[4])) + " - " + (StringUtils.isBlank(details[5])?"":(details[5]));
+				Label l7 = new Label(2, 2, date);
+				ws.addCell(l7);
+				ws.setColumnView(2, 20);
+
+				//写入标题后，数据写入的起始行要往下
+				sheetRowIndex = 3;
+			}
+			//写入标题行
+			if (titles!=null && titles.length>0) {
+				ws.setRowView(sheetRowIndex, 500);
+				for (int j=0;j<titles.length;j++) {
+					Label labelTitle = new Label(j, sheetRowIndex, titles[j], titleStyle);
+					ws.addCell(labelTitle);
+					ws.setColumnView(j, 20);
+				}
+				sheetRowIndex++;
+			}
+			//写入数据行
+			for (int i=startRow;i<rowCount;i++) {
+				ws.setRowView(sheetRowIndex, 500);
+				Object[] item;
+				if (dataList.get(i) instanceof List) {
+					item = ((List)dataList.get(i)).toArray();
+				} else {
+					item = (Object[])dataList.get(i);
+				}
+				for (int j=0;j<item.length;j++) {
+					Object value = item[j];
+					if (value != null) {
+						String content = "";
+						if (value instanceof Object[]) {
+							content = ((Object[])value)[1].toString();
+						} else {
+							content = value.toString();
+						}
+						if (sheetRowIndex==0 || (details!=null && sheetRowIndex==3)) {
+							Label itemValue = new Label(j, sheetRowIndex, content, titleStyle);
+							ws.addCell(itemValue);
+						} else {
+							Label itemValue = new Label(j, sheetRowIndex, content);
+							ws.addCell(itemValue);
+						}
+					}
+				}
+				sheetRowIndex++;
+			}
+			wwb.write();
+			wwb.close();
+
+			response.flushBuffer();
+			response.setStatus(HttpServletResponse.SC_OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				os.close();
+			} catch(IOException ioe) {
+				ioe.printStackTrace();
+			}
+		}
+	}
+
+
+	private static WritableCellFormat getTitleStyle() {
+		WritableCellFormat titleStyle = new WritableCellFormat();
+		try {
+			titleStyle.setBackground(Colour.GRAY_25);
+		} catch (WriteException e) {
+			return titleStyle;
+		}
+		return titleStyle;
+	}
+}

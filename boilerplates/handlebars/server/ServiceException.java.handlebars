@@ -1,0 +1,20 @@
+package {{packagename}}.exception;
+
+/**
+ * Created by xgen-cli on {{currentdate}}.
+ */
+public class ServiceException extends RuntimeException {
+
+    public ServiceException(){
+        super();
+    };
+
+    public ServiceException(String msg, Exception e){
+        super(msg,e);
+    }
+
+    public ServiceException(String msg){
+        super(msg);
+    }
+
+}

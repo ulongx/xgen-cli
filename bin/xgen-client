@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+'use strict';
+
+const program = require('commander');
+const join = require('path').join;
+const existsSync = require('fs').existsSync;
+const chalk = require('chalk');
+const error = chalk.red;
+const leftPad = require('left-pad');
+const mkdirpSync = require('fs-extra').mkdirpSync;
+
+program
+  .usage('[options] appName')
+  .option('--no-install', 'Install dependencies after boilerplate, default: true')
+  .parse(process.argv);
+
+  const appName = program.args[0];
+
+  if (!appName) {
+    program.help();
+  } else {
+    const destClient = join(process.cwd(), appName+'-cli');
+    if (existsSync(destClient)) {
+      console.error(error('此目录为非空目录，请在一个空的目录里面执行命令！'));
+      process.exit(1);
+    }
+
+    mkdirpSync(destClient);
+    console.log(`${chalk.green.bold(leftPad('create', 12))} ${appName+'-cli'}`);
+
+
+    process.chdir(destClient);
+    require('../lib/init-client')(program,'c');
+  }

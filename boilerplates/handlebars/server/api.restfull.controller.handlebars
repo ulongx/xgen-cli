@@ -1,0 +1,80 @@
+package com.mapath.{{pname}}.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import com.mapath.{{pname}}.utils.Json;
+import com.mapath.{{pname}}.service.AdminService;
+import com.mapath.{{pname}}.utils.pagination.DataGrid;
+import com.mapath.{{pname}}.utils.pagination.PageInfo;
+{{#rows}}
+import com.mapath.{{dbname}}.page.{{toUpCase tablename}}Page;
+{{/rows}}
+/**
+ * 客户端接口
+ * Created by xgen-cli on {{currentdate}}.
+ */
+@RestController
+@RequestMapping(value = {"/api"})
+public class ApiController {
+
+    private static Logger log = LoggerFactory.getLogger(ApiController.class);
+
+    @Autowired
+    private AdminService adminService;
+
+    {{#rows}}
+    /**==================  {{tablecomment}}  ==================*/
+    @ApiOperation(value = "获取{{tablecomment}}列表",notes = "根据{{tablecomment}}表的相关字段参数")
+    @RequestMapping(value = {"list{{toUpCaseF tablename}}s"}, method = RequestMethod.POST)
+    public Json list{{toUpCase tablename}}s(@ModelAttribute {{toUpCase tablename}}Page page) {
+      Json objJson = new Json();
+      DataGrid<{{toUpCase tablename}}Page> result = adminService.datagrid{{toUpCase tablename}}(page);
+      objJson.setObj(result);
+      objJson.setSuccess(true);
+      return objJson;
+    }
+
+    @ApiOperation(value="创建和更新{{tablecomment}}", notes="根据{{toUpCaseF tablename}}对象创建和更新{{tablecomment}},更新请带id")
+    @ApiImplicitParam(name = "{{toUpCaseF tablename}}", value = "{{tablecomment}}详细实体{{toUpCase tablename}}Page", required = true, dataType = "{{toUpCase tablename}}Page")
+    @RequestMapping(method = RequestMethod.POST, value={"save{{toUpCaseF tablename}}"})
+    public Json save{{toUpCase tablename}}(@ModelAttribute {{toUpCase tablename}}Page page) {
+        Json objJson = new Json();
+        {{toUpCase tablename}}Page {{tablename}}Page = adminService.save{{toUpCase tablename}}(page);
+        objJson.setObj({{tablename}}Page);
+        if({{tablename}}Page == null){
+            objJson.setSuccess(true);
+        }else{
+            objJson.setSuccess(false);
+            objJson.setMsg("save error");
+        }
+        return objJson;
+    }
+
+    @ApiOperation(value="删除{{tablecomment}}", notes="根据{{tablecomment}}Page的ids制定删除的对象")
+    @RequestMapping(method = RequestMethod.POST, value={"del{{toUpCaseF tablename}}"})
+    public Json del{{toUpCase tablename}}(@ModelAttribute {{toUpCase tablename}}Page page) {
+        Json objJson = new Json();
+        adminService.del{{toUpCase tablename}}s(StringUtils.isBlank(page.getId())?page.getIds().split(","):page.getId().split(","));
+        objJson.setSuccess(true);
+        return objJson;
+    }
+
+    @ApiOperation(value="获取{{tablecomment}}详细信息", notes="根据url的id来获取{{tablecomment}}详细信息")
+    @ApiImplicitParam(name = "id", value = "{{tablecomment}}ID", required = true, dataType = "String")
+    @RequestMapping(value="{{toUpCaseF tablename}}/{id}",method = RequestMethod.GET)
+    public Json get{{toUpCase tablename}}(@PathVariable String id) {
+        Json objJson = new Json();
+        objJson.setObj(adminService.get{{toUpCase tablename}}ById(id));
+        objJson.setSuccess(true);
+        return objJson;
+    }
+
+    {{/rows}}
+}

@@ -1,0 +1,47 @@
+import request from '../utils/request';
+import qs from 'qs';
+
+export async function query(params) {
+  console.log(JSON.stringify(params));
+  // return request(`/api/{{toUpCaseF namespace}}s?${qs.stringify(params)}`);
+  return request('/api/list{{toUpCaseF namespace}}s', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+export async function create(params) {
+  console.log(JSON.stringify(params));
+  // return request('/api/{{toUpCaseF namespace}}s', {
+  //   method: 'post',
+  //   body: qs.stringify(params),
+  // });
+  return request('/api/save{{toUpCaseF namespace}}', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+export async function remove(params) {
+  console.log(JSON.stringify(params));
+  // return request('/api/{{toUpCaseF namespace}}s', {
+  //   method: 'delete',
+  //   body: qs.stringify(params),
+  // });
+  return request('/api/del{{toUpCaseF namespace}}', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+export async function update(params) {
+  console.log(JSON.stringify(params));
+  // return request('/api/{{toUpCaseF namespace}}s', {
+  //   method: 'put',
+  //   body: qs.stringify(params),
+  // });
+  return request('/api/save{{toUpCaseF namespace}}', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

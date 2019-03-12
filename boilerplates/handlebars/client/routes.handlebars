@@ -1,0 +1,98 @@
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'dva';
+
+import {{toUpCase namespace}}List from '../../components/{{toUpCaseF namespace}}s/{{toUpCaseF namespace}}List';
+import {{toUpCase namespace}}Search from '../../components/{{toUpCaseF namespace}}s/{{toUpCaseF namespace}}Search';
+import {{toUpCase namespace}}Modal from '../../components/{{toUpCaseF namespace}}s/{{toUpCaseF namespace}}Modal';
+
+function {{toUpCase namespace}}({ location, dispatch, {{toUpCaseF namespace}}s }) {
+  const {
+      loading, list, total, current,
+      currentItem, modalVisible, modalType,pagination
+      } = {{toUpCaseF namespace}}s;
+  //定义需要传到服务器的 key
+  const { keyword } = location.query;
+  const {{toUpCaseF namespace}}SearchProps = {
+    keyword,
+    onAdd() {
+      dispatch({
+        type: '{{toUpCaseF namespace}}s/showModal',
+        payload: {
+          modalType: 'create'
+        }
+      });
+    },
+    onSearch(fieldsValue) {
+      dispatch({
+        type: '{{toUpCaseF namespace}}s/query',
+        payload: fieldsValue
+      });
+    }
+  };
+  const {{toUpCaseF namespace}}ListProps = {
+    dataSource: list,
+    loading,
+    pagination: pagination,
+    onEditItem(item) {
+      dispatch({
+        type: '{{toUpCaseF namespace}}s/showModal',
+        payload: {
+          modalType: 'update',
+          currentItem: item,
+        }
+      });
+    },
+    onPageChange(page) {
+      console.log(page);
+      dispatch({
+        type: '{{toUpCaseF namespace}}s/query',
+        payload: {
+          pageInfo:{page:page}
+        },
+      });
+    },
+    onDeleteItem(id) {
+      dispatch({
+        type: '{{toUpCaseF namespace}}s/delete',
+        payload: id
+      });
+    }
+  };
+  const {{toUpCaseF namespace}}ModalProps = {
+    item: modalType === 'create' ? {} : currentItem,
+    type: modalType,
+    visible: modalVisible,
+    onOk(data) {
+      dispatch({
+        type:`{{toUpCaseF namespace}}s/${modalType}`,
+        payload: data
+      });
+    },
+    onCancel() {
+      dispatch({
+        type: '{{toUpCaseF namespace}}s/hideModal'
+      });
+    },
+  };
+
+  const {{toUpCase namespace}}ModalGen = () => <{{toUpCase namespace}}Modal {...{{toUpCaseF namespace}}ModalProps} />;
+
+  return (
+      <div className='content-inner'>
+        <{{toUpCase namespace}}Search {...{{toUpCaseF namespace}}SearchProps} />
+        <{{toUpCase namespace}}List {...{{toUpCaseF namespace}}ListProps}/>
+        <{{toUpCase namespace}}ModalGen />
+      </div>
+  );
+}
+
+{{toUpCase namespace}}.propTypes = {
+  {{toUpCaseF namespace}}s: PropTypes.object,
+  dispatch: PropTypes.func,
+  location: PropTypes.object,
+};
+function mapStateToProps({ {{toUpCaseF namespace}}s }) {
+  return { {{toUpCaseF namespace}}s };
+}
+
+export default connect(mapStateToProps)({{toUpCase namespace}});

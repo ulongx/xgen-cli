@@ -1,0 +1,30 @@
+package {{packagename}}.service;
+
+{{#rows}}
+import {{packagename}}.page.{{toUpCase tablename}}Page;
+import {{packagename}}.model.{{toUpCase tablename}};
+{{/rows}}
+import com.mapath.util.pagination.model.DataGrid;
+
+/**
+ * 管理端service接口
+ * Created by xgen-cli on {{currentdate}}.
+ */
+public interface AdminService {
+
+  {{#rows}}
+	/**==================  {{tablecomment}}  ==================*/
+
+    DataGrid<{{toUpCase tablename}}> list{{toUpCase tablename}}sByKeyword({{toUpCase tablename}}Page page);
+
+    {{toUpCase tablename}} get{{toUpCase tablename}}ById(String id);
+
+    {{toUpCase tablename}} save{{toUpCase tablename}}({{toUpCase tablename}} {{toUpCaseF tablename}});
+
+    void del{{toUpCase tablename}}ById(String[] ids);
+
+    void delLogic{{toUpCase tablename}}ById(String[] ids);
+
+  {{/rows}}
+
+}

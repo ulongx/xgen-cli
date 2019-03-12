@@ -2,11 +2,17 @@
 
 [![NPM version](https://img.shields.io/npm/v/xgen-cli.svg?style=flat)](https://npmjs.org/package/xgen-cli) [![NPM downloads](http://img.shields.io/npm/dm/xgen-cli.svg?style=flat)](https://npmjs.org/package/xgen-cli)
 
-xgen 命令行程序。根据数据库自动生成前端reactjs和服务端SpringBoot项目。仅支持MySql
+xgen 命令行程序。根据数据库自动生成SpringBoot项目,带FreeMark 前端html模版，如果生成总个项目同时还带有reactjs工程。
+目前仅支持MySql数据库
+
+## 目前有三个 templates
+  * blackgreen
+  * ubold
+  * default
 
 ## Install
 
-```bash
+``` bash
 $ npm install -g xgen-cli
 ```
 
@@ -14,7 +20,7 @@ $ npm install -g xgen-cli
 
 ### xgen p
 
-```bash
+``` bash
 $ mkdir myApp && cd myApp
 $ xgen p dbname 127.0.0.1 root 123 3306
 $ make
@@ -23,7 +29,7 @@ $ make
 
 #### option
 
-```bash
+``` bash
   Usage: xgen <command> [options]
 
   Options:
@@ -39,30 +45,50 @@ $ make
     generate      在当前目录生成server或者client文件，短参数 "g"
 
   所有参数可以使用 -h (或 --help)来查看使用方式.
+
+  Example All:
+    xgen p app 127.0.0.1 root 1234 3306
+    xgen p -t blackgreen app 127.0.0.1 root 1234 3306 自定义主题
+
+  Example Server:
+    xgen s com.spring.demotest jar demodb 127.0.0.1 root 1234 3306
+    ->com.spring.demotest：  程序包名
+    ->jar：  spring的启动方式，分为jar 、 war 方式
+    xgen s -t blackgreen com.spring.demotest jar demodb 127.0.0.1 root 1234 3306     #自定义主题
+    ->-t：  指定主题名称
+
+  Example Single Java file:
+    xgen g -s model account com.spring.single demodb 127.0.0.1 root 1234 3306
+    ->account: 表名称
+    ->com.spring.single： 程序包名
+    xgen g -st blackgreen model account com.spring.single demodb 127.0.0.1 root 1234 3306  #生成指定模版
+    ->-t:  blackgreen 模版名称
 ```
 
-### xgen g
+### xgen g 单个文件生成
 
-server端单个类代码
-```bash
-$ xgen g --s model tablename demodb 127.0.0.1 root 123 3306;
+server端单个类代码,生成model的时候，会有model，mapper.xml, mapper.java, page.java, service.java, serviceImpl.java, xxx.html, xxxController.java
+``` bash
+$ xgen g -s model account com.spring.single demodb 127.0.0.1 root 1234 3306;
+$ xgen g -s service account com.spring.single demodb 127.0.0.1 root 1234 3306;
+$ xgen g -st blackgreen model account com.spring.single demodb 127.0.0.1 root 1234 3306  #生成指定模版
 ```
 
 client 端单个js代码
-```bash
-$ xgen g --c model tablename demodb 127.0.0.1 root 123 3306;
+``` bash
+$ xgen g -c model tablename demodb 127.0.0.1 root 123 3306;
 ```
 
 #### option
 
-```bash
+``` bash
   Usage: xgen g [options] <command>
 
   Options:
 
     -h, --help     output usage information
-    --c            output the client files
-    --s            output the server files
+    -c             output the client files
+    -s             output the server files
 
   Commands:
 

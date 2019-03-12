@@ -1,0 +1,140 @@
+import { create, remove, update, query } from '../services/{{toUpCaseF namespace}}s'
+import { parse } from 'qs'
+
+export default {
+
+  namespace: '{{toUpCaseF namespace}}s',
+
+  state: {
+    list: [],
+    loading: false,
+    currentItem: {},
+    modalVisible: false,
+    modalType: 'create',
+    pagination: {
+      showSizeChanger: true,
+      showQuickJumper: true,
+      showTotal: total => `共 ${total} 条`,
+      current: 1,
+      total: null
+    }
+  },
+
+  subscriptions: {
+    setup ({ dispatch, history }) {
+      history.listen(location => {
+        if (location.pathname === '/{{toUpCaseF namespace}}') {
+          dispatch({
+            type: 'query',
+            payload: location.query
+          })
+        }
+      })
+    }
+  },
+
+  effects: {
+    *query ({ payload }, { call, put }) {
+      yield put({ type: 'showLoading' })
+      const { data } = yield call(query, payload)
+      if (data) {
+        yield put({
+          type: 'querySuccess',
+          payload: {
+            list: data.data,
+            pagination: data.page
+          }
+        })
+      }
+    },
+    *'delete' ({ payload }, { call, put }) {
+      yield put({ type: 'showLoading' })
+      const { data } = yield call(remove, { id: payload })
+      if (data && data.success) {
+        yield put({
+          type: 'querySuccess',
+          payload: {
+            list: data.data,
+            pagination: {
+              total: data.page.total,
+              current: data.page.current
+            }
+          }
+        })
+      }
+    },
+    *create ({ payload }, { call, put }) {
+      yield put({ type: 'hideModal' })
+      yield put({ type: 'showLoading' })
+      const { data } = yield call(create, payload)
+      if (data && data.success) {
+        yield put({
+          type: 'querySuccess',
+          payload: {
+            list: data.data,
+            pagination: {
+              total: data.page.total,
+              current: data.page.current
+            }
+          }
+        })
+      }
+    },
+    *update ({ payload }, { select, call, put }) {
+      yield put({ type: 'hideModal' })
+      yield put({ type: 'showLoading' })
+      const id = yield select(({ {{toUpCaseF namespace}}s }) => {{toUpCaseF namespace}}s.currentItem.id)
+      const newObject = { ...payload, id }
+      const { data } = yield call(update, newObject)
+      if (data && data.success) {
+        yield put({
+          type: 'querySuccess',
+          payload: {
+            list: data.data,
+            pagination: {
+              total: data.page.total,
+              current: data.page.current
+            }
+          }
+        })
+      }
+    }
+  },
+
+  reducers: {
+    showLoading (state) {
+      return { ...state, loading: true }
+    },
+    querySuccess (state, action) {
+      return { ...state, ...action.payload, loading: false }
+    },
+    showModal (state, action) {
+      return { ...state, ...action.payload, modalVisible: true }
+    },
+    hideModal (state) {
+      return { ...state, modalVisible: false }
+    },
+    createSuccess(state, action){
+      const newObject = action.payload;
+      return {...state,list:[newObject,...state.list],loading:false }
+    },
+    deleteSuccess(state, action){
+      const id = action.payload;
+      //移除相同id的内容
+      const newList = state.list.filter({{toUpCaseF namespace}} => {{toUpCaseF namespace}}.id !== id);
+      return { ...state, list: newList, loading: false };
+    },
+    updateSuccess(state, action){
+      const updateObject = action.payload;
+      const newList = state.list.map({{toUpCaseF namespace}} => {
+        if ({{toUpCaseF namespace}}.id === updateObject.id) {
+          //更新相同id的内容...合并
+          return { ...{{toUpCaseF namespace}}, ...updateObject };
+        }
+        return {{toUpCaseF namespace}};
+      });
+      return { ...state, list: newList, loading: false };
+    },
+  }
+
+}

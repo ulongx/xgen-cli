@@ -1,0 +1,23 @@
+#可以使用make 命令创建工程和单个文件的生产，无需输入一大串长参数
+#可以make命令打包发布一起
+
+PROJECT = "{{dbname}}"
+#t 输入数据table的名字
+TARGET = "${t}"
+
+all: build
+
+m: ;@echo "生成文件${TARGET}.....";\
+	xgen g --c model ${TARGET} {{dbname}} {{url}} {{dbusername}} {{dbpassword}} {{port}};
+
+s: ;@echo "生成文件${TARGET}.....";\
+	xgen g --c service ${TARGET} {{dbname}} {{url}} {{dbusername}} {{dbpassword}} {{port}};
+
+c: ;@echo "生成文件${TARGET}.....";\
+	xgen g --c component ${TARGET} {{dbname}} {{url}} {{dbusername}} {{dbpassword}} {{port}};
+
+all: ;@echo "生成文件${TARGET}.....";\
+	xgen g --c all ${TARGET} {{dbname}} {{url}} {{dbusername}} {{dbpassword}} {{port}};
+
+build: ;@echo "正在编译打包${PROJECT}....."; \
+  npm run build;

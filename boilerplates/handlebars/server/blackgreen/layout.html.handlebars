@@ -1,0 +1,180 @@
+<#global cpath=rca.contextPath/>
+<#macro page selId="dash">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Spring Boot Project</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <!-- plugins css -->
+        <link href="${cpath}/js/plugins/datepicker/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/js/plugins/timpicker/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/js/plugins/select2/select2.min.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/js/plugins/sweetalert/sweetalert.css" rel="stylesheet" type="text/css">
+
+        <!-- App css -->
+        <link href="${cpath}/css/bootstrap.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/css/core.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/css/font.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/css/menu.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/css/components.css" rel="stylesheet" type="text/css">
+        <link href="${cpath}/css/style.css" rel="stylesheet">
+        <link href="${cpath}/css/reminder.css" rel="stylesheet" type="text/css">
+
+        <link href="${cpath}/css/pnotify.custom.min.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+    <!-- Begin page -->
+    <div id="wrapper">
+        <!-- Top Bar Start -->
+        <div class="topbar">
+            <!-- LOGO -->
+            <div class="topbar-left">
+                <!-- Image logo -->
+                <a href="${cpath}/dashboard" class="logo">
+                <span>
+                   <img src="${cpath}/images/logo.png" alt="" height="35">
+                </span>
+                    <i>
+                        <img src="${cpath}/images/logo_sm.png" alt="" height="28">
+                    </i>
+                </a>
+            </div>
+            <div class="navbar-default">
+                <div class="container">
+                    <!-- Navbar-left -->
+                    <div class="nav navbar-nav navbar-left">
+                        今天 2017-09-10 星期一
+                    </div>
+
+                    <!-- Right(Notification) -->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="${cpath}/lesson/listLessonSchedule" class="right-menu-item">
+                                <i class="fi-book"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <!--退出登录-->
+                            <a href="${cpath}/login/logout"  class="right-menu-item">
+                                <i class="fi-power"></i>
+                            </a>
+                        </li>
+
+                    </ul> <!-- end navbar-right -->
+
+                </div><!-- end container -->
+            </div>
+            <!-- end navbar -->
+        </div>
+        <!-- Top Bar End -->
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="left side-menu">
+            <div class="slimscroll-menu" id="remove-scroll">
+
+                <!--- Sidemenu -->
+                <div id="sidebar-menu">
+                    <!-- Left Menu Start -->
+                    <ul class="metisMenu nav" id="side-menu">
+                        <li class="menu-title">码道网络管理系统——管理端</li>
+                        <li>
+                            <a <#if (selId == 'dashboard')>class="sidebar_title "<#else>class="sidebar_title"</#if> href="${cpath}/dashboard"><i class="fi-air-play"></i><span> 首页导航 </span></a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fi-clock"></i><span> 菜单一 </span></a>
+                        </li>
+                        <#if (session_user.authorizedMenus??) >
+                            <#list session_user.authorizedMenus as item>
+                                <#if cur_parent_menu == item.id>
+                                    <li class="active">
+                                        <#else>
+                                            <li>
+                                </#if>
+                                <a href="javascript: void(0);">
+                                    <i class="${item.iconcls!''}"></i>
+                                    <span> ${item.text} </span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <ul class="nav-second-level nav">
+                                    <#list item.children as subitem>
+                                        <#if subitem.hidden == 0>
+                                            <li <#if cur_menu == subitem.id>class="active"</#if>><a href="${cpath}${subitem.url}">${subitem.text}</a></li>
+                                        </#if>
+                                    </#list>
+                                </ul>
+                                </li>
+                            </#list>
+                        </#if>
+                        {{#rows}}
+                        <li><a href="${cpath}/tables/list{{toUpCase tablename}}"><i class="fi-clock"></i><span> {{toUpCase tablename}} </span></a></li>
+                        {{/rows}}
+                    </ul>
+                </div>
+                <!-- Sidebar -->
+                <div class="clearfix"></div>
+
+            </div>
+            <!-- Sidebar -left -->
+        </div>
+        <!-- Left Sidebar End -->
+
+        <script type="text/javascript" src="${cpath}/js/jquery.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/metisMenu.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/jquery.slimscroll.js"></script>
+        <!-- plugins js  -->
+        <script type="text/javascript" src="${cpath}/js/plugins/moment/moment.js"></script>
+        <script type="text/javascript" src="${cpath}/js/plugins/datepicker/bootstrap-datepicker.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/plugins/timpicker/bootstrap-timepicker.js"></script>
+        <script type="text/javascript" src="${cpath}/js/plugins/select2/select2.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/jquery.blockUI.js"></script>
+        <script type="text/javascript" src="${cpath}/js/message.box.js"></script>
+        <script type="text/javascript" src="${cpath}/js/pnotify.custom.min.js"></script>
+        <script type="text/javascript" src="${cpath}/js/plugins/sweetalert/sweetalert.min.js"></script>
+        <!-- app js  -->
+        <script type="text/javascript" src="${cpath}/js/jquery.app.js"></script>
+
+        <div class="content-page">
+            <!-- Start content -->
+            <#nested/>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal fade" id="confirm_Modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content  p-0 b-0">
+                <div class="panel panel-color panel-default">
+                    <div class="panel-heading">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                        <h3 class="panel-title text-dark">提示</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>确定删除这行数据么？</p>
+                        <div class="row text-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="sure_delete">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Confirm Modal -->
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.input-datePicker').datepicker();
+            $('.input-daterange').datepicker();
+            $('input[name="timeStart"], input[name="timeEnd"]').timepicker({showMeridian: !1});
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+    </script>
+    </body>
+
+</html>
+</#macro>

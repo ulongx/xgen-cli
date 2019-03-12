@@ -1,0 +1,74 @@
+<#global cpath=rca.contextPath>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"    "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="cn">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Mapath 后台管理</title>
+	<link rel="stylesheet" href="${cpath}/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="${cpath}/css/basic-gray.css"/>
+	<script type="text/javascript" src="${cpath}/js/jquery-3.1.0.min.js"></script>
+	<script type="text/javascript" src="${cpath}/js/jquery.blockUI.js"></script>
+  <script type="text/javascript" src="${cpath}/js/main.js"></script>
+  <script type="text/javascript" src="${cpath}/js/message.box.js"></script>
+</head>
+<body class="loginBody">
+	<div class="loginBox">
+		<img src="${cpath}/images/logo.png" width="306" alt="HFH"/>
+
+		<div class="loginForm" id="loginForm">
+			<h3 class="orange mb20">欢迎使用 Mapath 后台管理系统</h3>
+
+			<!-- <form action="index.html"> -->
+				<div class="form-group btn inputBtn">
+					<span class="icon"><i class="icon-user"></i></span>
+					<label class="inputRight"><input type="text" id="userIdInput"/><span class="placeholder">请输入员工登录账号</span></label>
+				</div>
+				<div class="form-group btn inputBtn">
+					<span class="icon"><i class="icon-lock"></i></span>
+					<label class="inputRight"><input type="password" id="passWordInput"/><span class="placeholder">请输入登录密码</span></label>
+				</div>
+        <div class="form-group">登录名：admin，密码：123</div>
+				<div>
+					<button class="btn blueBtn" type="button">登录</button>
+					<span class="red" id="errorMes"></span>
+				</div>
+			<!-- </form> -->
+		</div>
+	</div>
+	<div class="copyRight">copyright © 2017 www.mapath.com</div>
+	<script type="text/javascript">
+		$(function () {
+			$('#loginForm').find('input').inputPlaceholder();
+
+			$('#passWordInput').keyup(function(e){
+				if(e.keyCode == 13){
+					$('.blueBtn').click();
+				}
+			});
+			$('.blueBtn').click(function(){
+				var userId = $("#userIdInput").val();
+				var passWord = $("#passWordInput").val();
+				lockUI();
+				$.ajax({
+					type: "POST",
+					url: "${cpath}/login/dologin",
+					data: {"userId":userId, "passWord":passWord},
+					dataType: "json",
+					success: function(result){
+						$.unblockUI();
+						if(result.success){
+							window.location.href = '${cpath}/tables/index';
+						}else{
+							$("#errorMes").html("用户名或密码错误!");
+						}
+					},
+					error: function(r){
+						$.unblockUI();
+						$("#errorMes").html("用户名或密码错误!");
+					}
+				});
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+package {{packagename}}.controller;
+
+import com.mapath.util.pagination.model.DataGrid;
+import com.mapath.util.pagination.model.PageInfo;
+import com.mapth.ms.utils.Json;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import {{packagename}}.model.{{toUpCase tablename}};
+import {{packagename}}.page.{{toUpCase tablename}}Page;
+
+import {{packagename}}.service.{{toUpCase tablename}}Service;
+/**
+ * 客户端接口
+ * Created by xgen-cli on {{currentdate}}.
+ */
+@Controller
+@RequestMapping(value = {"/{{toUpCaseF tablename}}s"})
+public class {{toUpCase tablename}}Controller {
+
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+  @Autowired
+  private {{toUpCase tablename}}Service {{toUpCaseF tablename}}Service;
+
+  @RequestMapping(value = "index")
+  public String index(){
+
+    return "index";
+  }
+
+  /**==================  {{tablecomment}}  ==================*/
+  /**
+   * 分页显示 {{toUpCase tablename}}
+   * @param {{toUpCaseF tablename}}Page
+   * @param model
+   * @return
+   */
+  @RequestMapping(value = {"list{{toUpCase tablename}}"})
+  public String get{{toUpCase tablename}}PageData({{toUpCase tablename}}Page {{toUpCaseF tablename}}Page, Model model) {
+      if ({{toUpCaseF tablename}}Page.getPageInfo() == null) {
+          PageInfo pageInfo = new PageInfo();
+          pageInfo.setPage(1);
+          {{toUpCaseF tablename}}Page.setPageInfo(pageInfo);
+      }
+      DataGrid<{{toUpCase tablename}}> dataGrid = adminService.list{{toUpCase tablename}}sByKeyword({{toUpCaseF tablename}}Page);
+      model.addAttribute("result", dataGrid);
+      model.addAttribute("keyword", {{toUpCaseF tablename}}Page.getKeyword());
+      return "{{toUpCaseF tablename}}";
+  }
+
+  /**
+   * 根据{{toUpCase tablename}}的id，获取数据
+   * @param id
+   * @return {{toUpCase tablename}}的json对象
+   */
+  @RequestMapping("/get{{toUpCase tablename}}ById/{id}")
+  @ResponseBody
+  public Json get{{toUpCase tablename}}ById(@PathVariable String id) {
+      Json result = new Json();
+      {{toUpCase tablename}} {{toUpCaseF tablename}} = adminService.get{{toUpCase tablename}}ById(id);
+      result.setObj({{toUpCaseF tablename}});
+      result.setSuccess(true);
+      return result;
+  }
+
+  /**
+   * 表单提交，保存{{toUpCaseF tablename}}数据
+   * @param {{toUpCaseF tablename}} 对象
+   * @return {{toUpCase tablename}}的json对象
+   */
+  @RequestMapping(method = RequestMethod.POST, value = {"/save{{toUpCase tablename}}"})
+  @ResponseBody
+  public Json save{{toUpCase tablename}}({{toUpCase tablename}} {{toUpCaseF tablename}}) {
+      Json result = new Json();
+      {{toUpCaseF tablename}} = adminService.save{{toUpCase tablename}}({{toUpCaseF tablename}});
+      result.setObj({{toUpCaseF tablename}});
+      result.setSuccess(true);
+      return result;
+  }
+
+  /**
+   * 根据 id 做逻辑删除
+   * @param id
+   * @return json对象
+   */
+  @RequestMapping("/del{{toUpCase tablename}}ById/{id}")
+  @ResponseBody
+  public Json del{{toUpCase tablename}}ById(@PathVariable String id) {
+      Json result = new Json();
+      String[] ids = new String[1];
+      ids[0] = id;
+      //adminService.del{{toUpCase tablename}}ById(ids);
+      adminService.delLogic{{toUpCase tablename}}ById(ids);
+      result.setSuccess(true);
+      return result;
+  }
+}

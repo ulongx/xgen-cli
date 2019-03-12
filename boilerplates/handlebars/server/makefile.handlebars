@@ -1,0 +1,24 @@
+#可以使用make 命令创建工程和单个文件的生产，无需输入一大串长参数
+#可以make命令打包发布一起
+
+PROJECT = "{{packagename}}"
+#参数 t 输入数据库table的名字
+TARGET = "${t}"
+
+all: package
+
+m: ;@echo "生成文件${TARGET}.....";\
+	xgen g -s model ${TARGET} {{dbname}} {{url}} {{dbusername}} {{dbpassword}} {{port}};
+
+s: ;@echo "生成文件${TARGET}.....";\
+	xgen g -s service ${TARGET} {{dbname}} {{url}} {{dbusername}} {{dbpassword}} {{port}};
+
+pa: ;@echo "正在编译打包${PROJECT}....."; \
+  mvn clean package -DskipTests;
+
+cc: ;@echo "正在编译${PROJECT}....."; \
+  mvn clean compile -DskipTests;
+
+dp: ;@echo "正在发布${PROJECT}....."; \
+  mvn clean package -DskipTests;\
+  scp ./target/oupoli.war tomcat@120.0.0.1:/home/tomcat/prod/oupoli/apache-tomcat-7.0.64/webapps/ROOT.war;

@@ -1,0 +1,221 @@
+<#global cpath=rca.contextPath/>
+<#macro htmlHead title charset="utf-8" lang="zh-CN" selId="layout">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta name="description" content="欧铂丽标准定制整装 - 管理系统">
+    <meta name="author" content="mapath">
+
+    <link rel="shortcut icon" href="${cpath}/assets/images/favicon_1.ico">
+
+    <title>苏州码道网络科技管理系统-${title}</title>
+
+    <link href="${cpath}/assets/plugins/timepicker/bootstrap-timepicker.min.css" rel="stylesheet">
+    <link href="${cpath}/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet">
+
+    <!-- select2 -->
+    <link href="${cpath}/assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="${cpath}/assets/plugins/select2/select2-bootstrap-theme.css" rel="stylesheet" type="text/css" />
+
+    <link href="${cpath}/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="${cpath}/assets/css/core.css" rel="stylesheet" type="text/css" />
+    <link href="${cpath}/assets/css/components.css" rel="stylesheet" type="text/css" />
+    <link href="${cpath}/assets/css/icons.css" rel="stylesheet" type="text/css" />
+    <link href="${cpath}/assets/css/pages.css" rel="stylesheet" type="text/css" />
+    <link href="${cpath}/assets/css/responsive.css" rel="stylesheet" type="text/css" />
+
+    <!--sweetalert-->
+    <link href="${cpath}/assets/plugins/sweetalert/sweetalert.css" rel="stylesheet" type="text/css">
+
+
+
+    <!-- HTML5 Shiv and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://lib.baomitu.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://lib.baomitu.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <#nested>
+    <script src="${cpath}/assets/js/modernizr.min.js"></script>
+
+</head>
+
+
+<body class="fixed-left">
+
+<!-- Begin page -->
+<div id="wrapper">
+
+    <!-- Top Bar Start -->
+    <div class="topbar">
+
+        <!-- LOGO -->
+        <div class="topbar-left">
+            <div class="text-center">
+                <a href="index.html" class="logo"><i class="icon-magnet icon-c-logo"></i><span>Ub<i class="md md-album"></i>ld</span></a>
+            </div>
+        </div>
+
+        <!-- Button mobile view to collapse sidebar menu -->
+        <div class="navbar navbar-default" role="navigation">
+            <div class="container">
+                <div class="">
+                    <div class="pull-left">
+                        <button class="button-menu-mobile open-left">
+                            <i class="ion-navicon"></i>
+                        </button>
+                        <span class="clearfix"></span>
+                    </div>
+
+                    <form role="search" class="navbar-left app-search pull-left hidden-xs">
+                        <input type="text" placeholder="Search..." class="form-control">
+                        <a href=""><i class="fa fa-search"></i></a>
+                    </form>
+
+
+                    <ul class="nav navbar-nav navbar-right pull-right">
+                        <li class="hidden-xs" data-toggle="tooltip" data-placement="bottom" data-original-title="信息提示">
+                            <a href="${cpath}/balance/withdrawal" id="btn-withdrawal" class="waves-effect waves-light">
+                                <i class="icon-bell"></i> <span  id="application_Withdrawals" class="badge badge-xs badge-danger">1</span><br/>
+                            </a>
+                        </li>
+                        <li class="hidden-xs" data-toggle="tooltip" data-placement="bottom" data-original-title="全屏显示">
+                            <a href="#" id="btn-fullscreen" class="waves-effect waves-light"><i class="icon-size-fullscreen"></i></a>
+                        </li>
+                        <#--<li class="hidden-xs">-->
+                            <#--<a href="#" class="right-bar-toggle waves-effect waves-light"><i class="icon-settings"></i></a>-->
+                        <#--</li>-->
+                        <li class="dropdown" data-toggle="tooltip" data-placement="bottom" data-original-title="个人信息">
+                            <a href="" class="dropdown-toggle profile" data-toggle="dropdown" aria-expanded="true"><img src="${cpath}/assets/images/users/avatar-0.jpg" alt="user-img" class="img-circle"> </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="javascript:void(0)"><i class="ti-user m-r-5"></i> 个人信息</a></li>
+                                <li><a href="javascript:void(0)"><i class="ti-settings m-r-5"></i> 设置</a></li>
+                                <li><a href="${cpath}/lockscreen"><i class="ti-lock m-r-5"></i> 锁定屏幕</a></li>
+                                <li><a href="${cpath}/login/logout"><i class="ti-power-off m-r-5"></i> 退出</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+    <!-- Top Bar End -->
+
+
+    <!-- ========== Left Sidebar Start ========== -->
+
+    <div class="left side-menu">
+        <div class="sidebar-inner slimscrollleft">
+            <!--- Divider -->
+            <div id="sidebar-menu">
+                <ul>
+
+                    <li class="text-muted menu-title">欧铂丽标准定制整装 - 管理系统</li>
+
+                    <li>
+                        <a href="${cpath}/manager/dashboard" class="waves-effect <#if (selId == 'dashboard')>active</#if>"><i class="ti-home"></i> <span> 首页导航 </span> </a>
+                    </li>
+                    <#if (session_user.authorizedMenus??) >
+                        <#list session_user.authorizedMenus as item>
+                        <li class="has_sub">
+                            <a href="javascript: void(0);" class="waves-effect <#if cur_parent_menu == item.id>active</#if>"><i class="${item.iconcls!''}"></i><span> ${item.text} </span></a>
+                            <ul class="list-unstyled">
+                                <#list item.children as subitem>
+                                    <#if subitem.hidden == 0>
+                                        <li <#if cur_menu == subitem.id>class="active"</#if>><a href="${cpath}${subitem.url}">${subitem.text}</a></li>
+                                    </#if>
+                                </#list>
+                            </ul>
+                        </li>
+                        </#list>
+                    </#if>
+                    <li class="has_sub">
+                      <a href="javascript:void(0);" class="waves-effect active"> <i class="ti-home"></i> <span>所有菜单</span></a>
+                      <ul class="list-unstyled">
+                        {{#rows}}
+                        <li><a href="${cpath}/tables/list{{toUpCase tablename}}">{{toUpCase tablename}}</a></li>
+                        {{/rows}}
+                      </ul>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <!-- Left Sidebar End -->
+</#macro>
+
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <#macro htmlBody>
+    <div class="content-page">
+        <!-- Start content -->
+        <div class="content">
+            <#nested/>
+        </div> <!-- content -->
+
+        <footer class="footer text-right">
+            2017 © Mapath Technical Support.
+        </footer>
+    </div>
+
+</div>
+</#macro>
+<!-- END wrapper -->
+<#macro javaScript>
+<script>
+    var resizefunc = [];
+</script>
+
+<!-- jQuery  -->
+<script src="${cpath}/assets/js/jquery.min.js"></script>
+<script src="${cpath}/assets/js/bootstrap.min.js"></script>
+<script src="${cpath}/assets/js/detect.js"></script>
+<script src="${cpath}/assets/js/fastclick.js"></script>
+<script src="${cpath}/assets/js/jquery.slimscroll.js"></script>
+<script src="${cpath}/assets/js/jquery.blockUI.js"></script>
+<script src="${cpath}/assets/js/waves.js"></script>
+<script src="${cpath}/assets/js/wow.min.js"></script>
+<script src="${cpath}/assets/js/jquery.nicescroll.js"></script>
+<script src="${cpath}/assets/js/jquery.scrollTo.min.js"></script>
+
+<script src="${cpath}/assets/plugins/peity/jquery.peity.min.js"></script>
+<!-- select2 -->
+<script src="${cpath}/assets/plugins/select2/select2.min.js"></script>
+
+<!-- jQuery  -->
+<script src="${cpath}/assets/plugins/counterup/jquery.counterup.min.js"></script>
+
+<!-- validate form -->
+<#--<script src="${cpath}/assets/plugins/parsleyjs/parsley.min.js"></script>-->
+<#--<script src="${cpath}/assets/plugins/parsleyjs/zh_cn.js"></script>-->
+<#--<script src="${cpath}/assets/plugins/validity/jquery.validity.js"></script>-->
+
+<script src="${cpath}/assets/plugins/notifications/notify.min.js"></script>
+<script src="${cpath}/assets/plugins/notifications/notify-metro.js"></script>
+
+<!--sweetalert-->
+<script type="text/javascript" src="/assets/plugins/sweetalert/sweetalert.min.js"></script>
+
+<!-- datepicker -->
+<script src="${cpath}/assets/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+<script src="${cpath}/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+
+<script src="${cpath}/assets/plugins/autoNumeric/autoNumeric.js"></script>
+
+<script src="${cpath}/assets/js/jquery.core.js"></script>
+<script src="${cpath}/assets/js/jquery.app.js"></script>
+
+    <#nested/>
+
+
+</body>
+</html>
+</#macro>

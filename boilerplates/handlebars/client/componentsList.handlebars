@@ -1,0 +1,53 @@
+import React, { PropTypes } from 'react';
+import { Table, Popconfirm, Pagination } from 'antd';
+
+const {{toUpCase namespace}}List = ({
+  total,current,loading,dataSource,
+  onEditItem,onPageChange,onDeleteItem,pagination
+}) => {
+  const columns = [{{#listTable rows}}{
+      title: "{{columncomment}}",
+      dataIndex: "{{columnname}}",
+      key: "{{columnname}}",
+    },{{/listTable}}{
+    title: "操作",
+    key: "operation",
+    render: (text, record) => (
+        <p>
+          <a onClick={() => onEditItem(record)}>编辑</a>
+          &nbsp;
+          <Popconfirm title="确定要删除吗？" onConfirm={() => onDeleteItem(record.id)}>
+            <a>删除</a>
+          </Popconfirm>
+        </p>
+    ),
+    width:"15%",
+  }];
+
+  return(
+    <div>
+      <Table
+        bordered
+        scroll=\{{ x: 1000 }}
+        columns={columns}
+        dataSource={dataSource}
+        loading={loading}
+        onChange={onPageChange}
+        pagination={pagination}
+        simple
+        rowKey={record => record.id}
+      />
+    </div>
+  );
+}
+
+{{toUpCase namespace}}List.PropTypes = {
+  dataSource: PropTypes.array,
+  loading: PropTypes.any,
+  total: PropTypes.any,
+  current: PropTypes.any,
+  onEditItem: PropTypes.func,
+  onPageChange: PropTypes.func
+}
+
+export default {{toUpCase namespace}}List

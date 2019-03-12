@@ -1,0 +1,44 @@
+<#macro paging pagination action method="post">
+
+<#if pagination.total gt 0>
+	<form id="pagination-form" action="${cpath}${action}" method="${method}">
+		<ul class="pagination m-t-0" id="pagUl">
+			<#if pagination.pageNo gt 1>
+				<li>
+					<a href="javascript:void(0)" toPage="${pagination.pageNo-1}" aria-label="Previous"><span aria-hidden="true">«</span></a>
+				</li>
+				<#if pagination.pageNo gt 3>
+					<li><a href="javascript:void(0)" toPage="1">1</a></li>
+				 </#if>
+				 <#if pagination.pageNo gt 4>
+					<li><span>...</span></li>
+				 </#if>
+			<#else>
+				<li>
+					<a href="javascript:void(0)" aria-label="Previous"><span aria-hidden="false">«</span></a>
+				</li>
+			</#if>
+
+			<#list pagination.pageArr as p>
+				<#if p==pagination.current>
+					<li class="active"><a href="javascript:void(0)">${p}</a></li>
+				<#else>
+					<li><a href="javascript:void(0)" toPage="${p}">${p}</a></li>
+				</#if>
+			</#list>
+
+			<#if pagination.pageCount gt pagination.pageNo>
+				<#if pagination.pageCount gt (pagination.pageNo+3)>
+					<li><span>...</span></li>
+				</#if>
+				<#if pagination.pageCount gt (pagination.pageNo+2)>
+					<li><a href="javascript:void(0)" toPage="${pagination.pageCount}">${pagination.pageCount}</a></li>
+				</#if>
+				<li ><a href="javascript:void(0)" toPage="${pagination.pageNo+1}" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+			<#else>
+				<li><a href="javascript:void(0)" aria-label="Next"><span aria-hidden="false">»</span></a></li>
+			</#if>
+		</ul>
+	</form>
+</#if>
+</#macro>

@@ -1,0 +1,93 @@
+package {{packagename}}.utils;
+
+import java.util.Random;
+import java.util.UUID;
+
+/**
+ * Created by xgen-cli on {{currentdate}}.
+ */
+public class StringUtil {
+
+    private static final String UNIT = "万仟佰拾亿仟佰拾万仟佰拾元角分";
+    private static final String DIGIT = "零壹贰叁肆伍陆柒捌玖";
+    private static final double MAX_VALUE = 9999999999999.99D;
+
+    public static String seqAdd(String currentBillNo){
+        String batchSeq = "0001";
+
+        if(currentBillNo != null && !"".equals(currentBillNo)){
+            int toNumSeq = Integer.parseInt(currentBillNo);
+            toNumSeq = toNumSeq + 1;
+            if(toNumSeq <= 9){
+                batchSeq = "000" + toNumSeq;
+            }else if(toNumSeq <= 99 && toNumSeq > 9){
+                batchSeq = "00" + toNumSeq;
+            }else if(toNumSeq <= 999 && toNumSeq > 99){
+                batchSeq = "0" + toNumSeq;
+            }else{
+                if(toNumSeq >= 10000){
+                    batchSeq = "0001";
+                }else{
+                    batchSeq = toNumSeq + "";
+                }
+            }
+        }
+
+        return batchSeq;
+    }
+
+
+    public static String changeMoneyToChiness(double v) {
+        if (v < 0 || v > MAX_VALUE){
+            return "参数非法!";
+        }
+        long l = Math.round(v * 100);
+        if (l == 0){
+            return "零元整";
+        }
+        String strValue = l + "";
+        // i用来控制数
+        int i = 0;
+        // j用来控制单位
+        int j = UNIT.length() - strValue.length();
+        String rs = "";
+        boolean isZero = false;
+        for (; i < strValue.length(); i++, j++) {
+            char ch = strValue.charAt(i);
+            if (ch == '0') {
+                isZero = true;
+                if (UNIT.charAt(j) == '亿' || UNIT.charAt(j) == '万' || UNIT.charAt(j) == '元') {
+                    rs = rs + UNIT.charAt(j);
+                    isZero = false;
+                }
+            } else {
+                if (isZero) {
+                    rs = rs + "零";
+                    isZero = false;
+                }
+                rs = rs + DIGIT.charAt(ch - '0') + UNIT.charAt(j);
+            }
+        }
+        if (!rs.endsWith("分")) {
+            rs = rs + "整";
+        }
+        rs = rs.replaceAll("亿万", "亿");
+        return rs;
+    }
+
+    public static String getUuid() {
+        String uuid = UUID.randomUUID().toString();
+        return uuid.replaceAll("-", "");
+    }
+
+    public static String generateRandomNum(int length) {
+        StringBuffer randomStr = new StringBuffer();
+        String src = "0123456789";
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            int number = random.nextInt(src.length());
+            randomStr.append(src.charAt(number));
+        }
+        return randomStr.toString();
+    }
+}

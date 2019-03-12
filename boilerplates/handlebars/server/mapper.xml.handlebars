@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="{{packagename}}.mapper.{{toUpCase tablename}}Mapper">
+
+	<resultMap id="{{toUpCase tablename}}Result" type="{{packagename}}.model.{{toUpCase tablename}}">
+	{{#rows}}
+		<result property="{{toUpCaseF column_name}}" column="{{column_name}}"/>
+	{{/rows}}
+  </resultMap>
+
+	<sql id="searchColumns">
+    {{#eachlist rows}}
+        t.{{columnname}}
+    {{/eachlist}}
+	</sql>
+
+  <select id="list{{toUpCase tablename}}" parameterType="{{packagename}}.page.{{toUpCase tablename}}Page" resultMap="{{toUpCase tablename}}Result">
+		select
+        <include refid="searchColumns"/>
+		from
+			{{tablename}} t
+		<where>
+			{{#isDelete rows}}
+			{{/isDelete}}
+			{{#eachlistWhere rows}}
+				{{content}}
+			{{/eachlistWhere}}
+		</where>
+  </select>
+
+	<select id="get{{toUpCase tablename}}ById" parameterType="java.lang.String" resultType="{{packagename}}.model.{{toUpCase tablename}}">
+      select
+      <include refid="searchColumns"/>
+      from {{tablename}} t
+			<where>
+				t.id = #{id}
+			</where>
+  </select>
+
+	<insert id="add{{toUpCase tablename}}" parameterType="{{packagename}}.model.{{toUpCase tablename}}">
+		insert into {{tablename}} (
+		<trim suffix="" suffixOverrides=",">
+      {{#eachlistInst rows}}
+          {{columnname}}
+      {{/eachlistInst}}
+
+		</trim>
+		) values (
+		<trim suffix="" suffixOverrides=",">
+      {{#eachlistinsert rows}}
+          {{columnname}}
+      {{/eachlistinsert}}
+		</trim>
+		)
+  	</insert>
+
+		<update id="update{{toUpCase tablename}}" parameterType="{{packagename}}.model.{{toUpCase tablename}}">
+			update
+				{{tablename}}
+			set
+			<trim suffix="" suffixOverrides=",">
+				{{#eachlistparam rows}}
+	          {{columnname}}
+	      {{/eachlistparam}}
+			</trim>
+			where
+				id = #{id}
+		</update>
+
+
+		<delete id="delete{{toUpCase tablename}}ByIds" parameterType="string">
+        delete from {{tablename}} where id in
+        <foreach collection="array" index="index" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+
+    <update id="deleteLogic{{toUpCase tablename}}ByIds" parameterType="{{packagename}}.model.{{toUpCase tablename}}">
+        update
+            {{tablename}}
+        set
+            is_delete='1'
+        where id in
+        <foreach collection="array" index="index" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </update>
+
+    <select id="list{{toUpCase tablename}}ByKeyword" parameterType="{{packagename}}.page.{{toUpCase tablename}}Page" resultMap="{{toUpCase tablename}}Result">
+        select
+          <include refid="searchColumns"/>
+        from
+          {{tablename}} t
+        <where>
+            {{#isDelete rows}}
+						{{/isDelete}}
+
+						<if test="keyword != null and keyword != ''">
+                and
+								({{#eachKeywordWhere rows}}
+										{{content}}
+									{{/eachKeywordWhere}})
+            </if>
+        </where>
+    </select>
+
+</mapper>

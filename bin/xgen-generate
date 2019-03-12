@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+'use strict';
+
+const program = require('commander');
+
+program
+  .option('-c, --client', 'generate client files')
+  .option('-s, --server', 'generate server files')
+  .option('-t, --serverthemes', 'Generate files according to the theme')
+  .parse(process.argv);
+
+let argsArr = program.args
+
+if (program.client) {
+  console.log('exec client');
+  require('../lib/g-client')(program);
+}else if (program.server && !program.serverthemes) {
+  argsArr.unshift('default');
+  require('../lib/g-server')(argsArr);
+}else if (program.server && program.serverthemes) {
+  require('../lib/g-server')(argsArr);
+}else{
+  console.log('请输入正确的参数；');
+  console.log();
+  console.log('  Options:');
+  console.log();
+  console.log('    -c        生成client相关文件 ');
+  console.log('    -s        生成server端相关文件,默认主题 ');
+  console.log('    -t        生成server端相关文件，选择相应主题 ');
+}

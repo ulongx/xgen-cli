@@ -1,0 +1,54 @@
+package {{packagename}}.config;
+
+
+import {{packagename}}.exception.ExceptionHandler;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import java.util.List;
+
+/**
+ * Created by xgen-cli on {{currentdate}}.
+ */
+@EnableWebMvc
+@Configuration
+public class MvcConfig extends WebMvcConfigurerAdapter {
+
+
+    @Override
+    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+        exceptionResolvers.add(exceptionHandler());
+        super.configureHandlerExceptionResolvers(exceptionResolvers);
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/css/**").addResourceLocations("classpath:/static/css/");
+        registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js/");
+        registry.addResourceHandler("/images/**").addResourceLocations("classpath:/static/images/");
+
+        registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/assets/");
+    }
+
+    @Bean
+    public ExceptionHandler exceptionHandler() {
+        return new ExceptionHandler();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(AuthorCheck()).excludePathPatterns("/login/**").excludePathPatterns("/");
+        super.addInterceptors(registry);
+    }
+
+    @Bean
+    public AuthorCheck AuthorCheck(){
+        return new AuthorCheck();
+    }
+
+}

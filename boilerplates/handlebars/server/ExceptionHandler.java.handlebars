@@ -1,0 +1,64 @@
+package {{packagename}}.exception;
+
+import com.mapth.ms.utils.Json;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by xgen-cli on {{currentdate}}.
+ */
+public class ExceptionHandler implements HandlerExceptionResolver {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandler.class);
+
+    @Override
+    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object o, Exception ex) {
+        MappingJackson2JsonView view = new MappingJackson2JsonView();
+
+        Json data = new Json();
+        String msg = ex.getMessage();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.warn("Exception : ", ex);
+        }
+        if (ex instanceof ServiceException) {
+            msg = StringUtils.isEmpty(msg) ? "service 错误，未定义错误信息，请查看日志" : msg;
+        } else if (ex instanceof MethodArgumentNotValidException || ex instanceof BindingResult) {
+
+            BindingResult bindingResult = (ex instanceof BindingResult) ? (BindingResult) ex : ((MethodArgumentNotValidException) ex).getBindingResult();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            StringBuilder sb = new StringBuilder();
+            for (FieldError fieldError : fieldErrors) {
+//                data.put(fieldError.getField(),fieldError.getDefaultMessage()); // key->value,形式返回错误校验的消息
+                sb.append(";" + fieldError.getDefaultMessage());
+            }
+            msg = sb.toString().substring(1);
+        } else {
+            msg = "系统未知异常";
+        }
+        data.setSuccess(false);
+        data.setMsg(msg);
+        LOGGER.error("未知异常捕获,ex-type:{},ex-msg:{}", ex.getClass(), ex.getMessage(), ex);
+        return new ModelAndView(view, resultDataToMap(data));
+    }
+
+
+    private static Map<String, Object> resultDataToMap(Json resultData) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("msg", resultData.getMsg());
+        map.put("success", resultData.isSuccess());
+        return map;
+    }
+}
